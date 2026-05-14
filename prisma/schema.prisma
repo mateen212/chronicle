@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ItemType {
+  movie
+  series
+  anime
+  manga
+  book
+  project
+  course
+  game
+}
+
+enum ItemStatus {
+  planned
+  watching
+  reading
+  completed
+  paused
+  dropped
+}
+
+enum ActivityAction {
+  item_created
+  progress_updated
+  status_changed
+  rating_changed
+  item_completed
+}
+
+model User {
+  id          String        @id
+  email       String        @unique
+  name        String?
+  image       String?
+  createdAt   DateTime      @default(now())
+  items       Item[]
+  activities  ActivityLog[]
+  collections Collection[]
+}
+
+model Item {
+  id             String          @id @default(cuid())
+  userId         String
+  type           ItemType
+  title          String
+  slug           String
+  description    String?
+  notes          String?
+  imageUrl       String?
+  status         ItemStatus      @default(planned)
+  progressCurrent Int            @default(0)
+  progressTotal  Int?
+  rating         Int?
+  externalId     String?
+  externalSource String?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metadata       ItemMetadata?
+  activities     ActivityLog[]
+  collectionItems CollectionItem[]
+
+  @@unique([slug, userId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ItemMetadata {
+  id        String   @id @default(cuid())
+  itemId    String   @unique
+  data      Json
+
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id        String         @id @default(cuid())
+  userId    String
+  itemId    String?
+  action    ActivityAction
+  details   Json?
+  createdAt DateTime       @default(now())
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item      Item?          @relation(fields: [itemId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Collection {
+  id          String           @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  createdAt   DateTime         @default(now())
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       CollectionItem[]
+
+  @@index([userId])
+}
+
+model CollectionItem {
+  collectionId String
+  itemId       String
+
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  item         Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, itemId])
+  @@index([itemId])
+}
