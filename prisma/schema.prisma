@@ -36,7 +36,8 @@ enum ActivityAction {
 }
 
 model User {
-  id          String        @id
+  id          String        @id @default(cuid())
+  externalId  String?       @unique
   email       String        @unique
   name        String?
   image       String?

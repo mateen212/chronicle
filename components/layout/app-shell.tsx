@@ -1,4 +1,5 @@
 import { UserButton } from "@clerk/nextjs";
+import { SyncUserOnce } from "@/components/auth/sync-once";
 
 import { GradientBackground } from "@/components/common/gradient-background";
 import { SearchModal } from "@/components/items/search-modal";
@@ -12,8 +13,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar />
         <main className="min-w-0 flex-1 space-y-6">
           <header className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-xl">
-            <SearchModal />
-            <UserButton />
+              <SearchModal />
+              <div className="flex items-center gap-3">
+                <SyncUserOnce />
+                <UserButton />
+              </div>
           </header>
           {children}
         </main>
