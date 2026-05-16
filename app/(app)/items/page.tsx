@@ -1,18 +1,21 @@
 import { Prisma } from "@prisma/client";
 
-import { EmptyState } from "@/components/common/empty-state";
-import { ItemCard } from "@/components/items/item-card";
+import { TagPill } from "@/components/common/tag-pill";
+import { ItemsViewToggle } from "@/components/items/items-view-toggle";
 import { requireDbUser } from "@/lib/auth";
 import { ITEM_TYPES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma/client";
 
 type ItemsPageProps = {
-  searchParams: Promise<{ q?: string; type?: string; status?: string }>;
+  searchParams: Promise<{ q?: string; type?: string; status?: string; tag?: string }>;
 };
 
 export default async function ItemsPage({ searchParams }: ItemsPageProps) {
   const user = await requireDbUser();
   const filters = await searchParams;
+
+  // Fetch user tags for filter bar
+  const userTags = await prisma.tag.findMany({ where: { userId: user.id }, orderBy: { name: "asc" } });
 
   const where: Prisma.ItemWhereInput = {
     userId: user.id,
@@ -28,13 +31,14 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
       ? { type: filters.type as Prisma.ItemWhereInput["type"] }
       : {}),
     ...(filters.status ? { status: filters.status as Prisma.ItemWhereInput["status"] } : {}),
+    ...(filters.tag ? { tags: { some: { tag: { name: filters.tag } } } } : {}),
   };
 
   const items = await prisma.item.findMany({ where, orderBy: { updatedAt: "desc" }, take: 48 });
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-4 z-10 rounded-2xl border border-white/10 bg-slate-950/70 p-3 backdrop-blur-xl">
+      <div className="sticky top-4 z-10 space-y-2 rounded-2xl border border-white/10 bg-slate-950/70 p-3 backdrop-blur-xl">
         <form className="grid gap-2 sm:grid-cols-4">
           <input
             name="q"
@@ -59,19 +63,28 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
             <option value="paused" className="bg-slate-900">paused</option>
             <option value="dropped" className="bg-slate-900">dropped</option>
           </select>
-          <button className="rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-sm">Apply filters</button>
+          <button type="submit" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-sm transition hover:bg-white/15">Apply filters</button>
         </form>
+
+        {/* Tag filter pills */}
+        {userTags.length > 0 && (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {filters.tag && (
+              <a href="/items" className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-xs text-muted-foreground hover:bg-white/10">
+                ✕ Clear tag
+              </a>
+            )}
+            {userTags.map((tag) => (
+              <a key={tag.id} href={`/items?tag=${encodeURIComponent(tag.name)}${filters.type ? `&type=${filters.type}` : ""}${filters.status ? `&status=${filters.status}` : ""}`}>
+                <TagPill label={tag.name} color={tag.color} active={filters.tag === tag.name} />
+              </a>
+            ))}
+          </div>
+        )}
       </div>
 
-      {items.length ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {items.map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </div>
-      ) : (
-        <EmptyState title="No items found" description="Try changing filters or adding new entries using Search & add." />
-      )}
+      {/* Items grid/calendar */}
+      <ItemsViewToggle items={items} />
     </div>
   );
 }

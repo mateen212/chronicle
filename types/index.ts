@@ -6,7 +6,7 @@ export type ChronicleItemType =
   | "book"
   | "project"
   | "course"
-  | "game";
+  | "game"
 
 export type ChronicleStatus =
   | "planned"
@@ -14,13 +14,20 @@ export type ChronicleStatus =
   | "reading"
   | "completed"
   | "paused"
-  | "dropped";
+  | "dropped"
 
-export type SearchResult = {
-  externalId: string;
-  externalSource: "tmdb" | "jikan" | "google_books" | "github";
-  title: string;
-  description?: string;
-  imageUrl?: string;
-  metadata?: Record<string, unknown>;
-};
+export interface SearchResult {
+  externalId: string
+  externalSource: string
+  title: string
+  description?: string
+  imageUrl?: string
+  metadata: Record<string, unknown>
+}
+
+export interface DashboardStats {
+  total: number
+  active: number
+  completed: number
+  paused: number
+}

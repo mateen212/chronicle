@@ -1,168 +1,126 @@
-"use server";
+"use server"
+import { revalidatePath } from "next/cache"
+import { prisma } from "@/lib/prisma/client"
+import { requireDbUser } from "@/lib/auth"
 
-import { ItemStatus, ItemType, Prisma } from "@prisma/client";
-import { revalidatePath } from "next/cache";
-import slugify from "slugify";
-import { z } from "zod";
-
-import { requireDbUser } from "@/lib/auth";
-import { prisma } from "@/lib/prisma/client";
-
-const itemSchema = z.object({
-  title: z.string().min(1),
-  type: z.nativeEnum(ItemType),
-  status: z.nativeEnum(ItemStatus).default(ItemStatus.planned),
-  description: z.string().optional(),
-  notes: z.string().optional(),
-  imageUrl: z.string().url().optional().or(z.literal("")),
-  progressCurrent: z.coerce.number().int().min(0).default(0),
-  progressTotal: z.coerce.number().int().min(0).optional(),
-  rating: z.coerce.number().int().min(1).max(10).optional(),
-  externalId: z.string().optional(),
-  externalSource: z.string().optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-});
-
-function toSlug(input: string) {
-  return slugify(input, { lower: true, strict: true, trim: true });
+function makeSlug(title: string, id: string) {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + "-" + id.slice(-6)
 }
 
-export async function createItemAction(rawInput: unknown) {
-  const user = await requireDbUser();
-  const input = itemSchema.parse(rawInput);
-
-  const baseSlug = toSlug(input.title);
-  const count = await prisma.item.count({ where: { userId: user.id, slug: { startsWith: baseSlug } } });
-  const slug = count ? `${baseSlug}-${count + 1}` : baseSlug;
-
-  const createdItem = await prisma.item.create({
+export async function createItem(data: {
+  type: string
+  title: string
+  description?: string
+  imageUrl?: string
+  externalId?: string
+  externalSource?: string
+  metadata?: Record<string, unknown>
+  progressTotal?: number
+  status?: string
+  rating?: number
+}) {
+  const user = await requireDbUser()
+  const id = crypto.randomUUID()
+  const item = await prisma.item.create({
     data: {
+      id,
       userId: user.id,
-      title: input.title,
-      slug,
-      type: input.type,
-      status: input.status,
-      description: input.description,
-      notes: input.notes,
-      imageUrl: input.imageUrl || undefined,
-      progressCurrent: input.progressCurrent,
-      progressTotal: input.progressTotal,
-      rating: input.rating,
-      externalId: input.externalId,
-      externalSource: input.externalSource,
-      metadata: input.metadata ? { create: { data: input.metadata as Prisma.InputJsonValue } } : undefined,
+      type: data.type as Parameters<typeof prisma.item.create>[0]["data"]["type"],
+      title: data.title,
+      slug: makeSlug(data.title, id),
+      description: data.description,
+      imageUrl: data.imageUrl,
+      externalId: data.externalId,
+      externalSource: data.externalSource,
+      progressTotal: data.progressTotal,
+      rating: data.rating,
+      ...(data.status ? { status: data.status as Parameters<typeof prisma.item.create>[0]["data"]["status"] } : {}),
+      metadata: data.metadata ? { create: { data: data.metadata as import("@prisma/client").Prisma.InputJsonValue } } : undefined,
     },
-  });
-
+  })
   await prisma.activityLog.create({
     data: {
       userId: user.id,
-      itemId: createdItem.id,
+      itemId: item.id,
       action: "item_created",
-      details: {
-        type: createdItem.type,
-        title: createdItem.title,
-      },
+      details: { title: data.title, type: data.type },
     },
-  });
-
-  revalidatePath("/dashboard");
-  revalidatePath("/items");
-  return createdItem;
+  })
+  revalidatePath("/dashboard")
+  revalidatePath("/items")
+  return item
 }
 
-export async function updateItemAction(itemId: string, rawInput: unknown) {
-  const user = await requireDbUser();
-  const input = itemSchema.partial().parse(rawInput);
-
-  const item = await prisma.item.findFirst({ where: { id: itemId, userId: user.id } });
-  if (!item) throw new Error("Item not found");
-
+export async function updateItemProgress(itemId: string, current: number, total?: number) {
+  const user = await requireDbUser()
+  const item = await prisma.item.findFirst({ where: { id: itemId, userId: user.id } })
+  if (!item) throw new Error("Item not found")
+  const completed = total ? current >= total : false
   const updated = await prisma.item.update({
     where: { id: itemId },
     data: {
-      title: input.title,
-      type: input.type,
-      status: input.status,
-      description: input.description,
-      notes: input.notes,
-      imageUrl: input.imageUrl || undefined,
-      progressCurrent: input.progressCurrent,
-      progressTotal: input.progressTotal,
-      rating: input.rating,
+      progressCurrent: current,
+      ...(total !== undefined ? { progressTotal: total } : {}),
+      ...(completed ? { status: "completed", completedAt: new Date() } : {}),
     },
-  });
-
-  if (typeof input.status !== "undefined" && input.status !== item.status) {
-    await prisma.activityLog.create({
-      data: {
-        userId: user.id,
-        itemId,
-        action: "status_changed",
-        details: {
-          from: item.status,
-          to: input.status,
-        },
-      },
-    });
-  }
-
-  if (typeof input.progressCurrent !== "undefined" && input.progressCurrent !== item.progressCurrent) {
-    await prisma.activityLog.create({
-      data: {
-        userId: user.id,
-        itemId,
-        action: "progress_updated",
-        details: {
-          from: item.progressCurrent,
-          to: input.progressCurrent,
-          total: input.progressTotal ?? item.progressTotal,
-        },
-      },
-    });
-  }
-
-  if (typeof input.rating !== "undefined" && input.rating !== item.rating) {
-    await prisma.activityLog.create({
-      data: {
-        userId: user.id,
-        itemId,
-        action: "rating_changed",
-        details: {
-          from: item.rating,
-          to: input.rating,
-        },
-      },
-    });
-  }
-
-  if (updated.status === "completed" && item.status !== "completed") {
-    await prisma.activityLog.create({
-      data: {
-        userId: user.id,
-        itemId,
-        action: "item_completed",
-        details: {
-          title: updated.title,
-        },
-      },
-    });
-  }
-
-  revalidatePath("/dashboard");
-  revalidatePath("/items");
-  revalidatePath(`/items/${itemId}`);
-  return updated;
+  })
+  await prisma.activityLog.create({
+    data: {
+      userId: user.id,
+      itemId,
+      action: completed ? "item_completed" : "progress_updated",
+      details: { previous: item.progressCurrent, current, total },
+    },
+  })
+  revalidatePath("/dashboard")
+  revalidatePath(`/items/${itemId}`)
+  return updated
 }
 
-export async function deleteItemAction(itemId: string) {
-  const user = await requireDbUser();
-
-  const item = await prisma.item.findFirst({ where: { id: itemId, userId: user.id } });
-  if (!item) throw new Error("Item not found");
-
-  await prisma.item.delete({ where: { id: itemId } });
-
-  revalidatePath("/dashboard");
-  revalidatePath("/items");
+export async function updateItemStatus(itemId: string, status: string) {
+  const user = await requireDbUser()
+  const updated = await prisma.item.update({
+    where: { id: itemId, userId: user.id },
+    data: {
+      status: status as Parameters<typeof prisma.item.update>[0]["data"]["status"],
+      ...(status === "watching" || status === "reading" ? { startedAt: new Date() } : {}),
+      ...(status === "completed" ? { completedAt: new Date() } : {}),
+    },
+  })
+  await prisma.activityLog.create({
+    data: {
+      userId: user.id,
+      itemId,
+      action: status === "completed" ? "item_completed" : "status_changed",
+      details: { status },
+    },
+  })
+  revalidatePath("/dashboard")
+  revalidatePath(`/items/${itemId}`)
+  return updated
 }
+
+export async function updateItemRating(itemId: string, rating: number) {
+  const user = await requireDbUser()
+  const updated = await prisma.item.update({ where: { id: itemId, userId: user.id }, data: { rating } })
+  await prisma.activityLog.create({
+    data: { userId: user.id, itemId, action: "rating_changed", details: { rating } },
+  })
+  revalidatePath(`/items/${itemId}`)
+  return updated
+}
+
+export async function updateItemNotes(itemId: string, notes: string) {
+  const user = await requireDbUser()
+  return prisma.item.update({ where: { id: itemId, userId: user.id }, data: { notes } })
+}
+
+export async function deleteItem(itemId: string) {
+  const user = await requireDbUser()
+  await prisma.item.delete({ where: { id: itemId, userId: user.id } })
+  revalidatePath("/items")
+  revalidatePath("/dashboard")
+}
+
+// Backward-compat alias
+export const createItemAction = createItem

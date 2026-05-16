@@ -45,6 +45,8 @@ model User {
   items       Item[]
   activities  ActivityLog[]
   collections Collection[]
+  tags        Tag[]
+  settings    UserSettings?
 }
 
 model Item {
@@ -71,6 +73,7 @@ model Item {
   metadata       ItemMetadata?
   activities     ActivityLog[]
   collectionItems CollectionItem[]
+  tags           ItemTag[]
 
   @@unique([slug, userId])
   @@index([userId])
@@ -123,4 +126,35 @@ model CollectionItem {
 
   @@id([collectionId, itemId])
   @@index([itemId])
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  userId    String
+  name      String
+  color     String    @default("#6366f1")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     ItemTag[]
+
+  @@unique([userId, name])
+}
+
+model ItemTag {
+  itemId String
+  tagId  String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, tagId])
+}
+
+model UserSettings {
+  id                  String  @id @default(cuid())
+  userId              String  @unique
+  publicProfile       Boolean @default(false)
+  username            String? @unique
+  emailWeeklyDigest   Boolean @default(true)
+  emailPausedReminder Boolean @default(true)
+  emailNewSeason      Boolean @default(false)
+  user                User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

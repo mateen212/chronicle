@@ -1,21 +1,23 @@
 "use client";
 
 import { useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 
 export function SyncUserOnce() {
-  const { isSignedIn } = useUser();
+  const { isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
-    if (!isSignedIn) return;
+    if (!isLoaded || !isSignedIn) return;
     try {
       const synced = sessionStorage.getItem("chronicle_user_synced");
       if (synced) return;
-      void fetch("/api/sync", { method: "POST" }).then(() => sessionStorage.setItem("chronicle_user_synced", "1")).catch(() => {});
+      void fetch("/api/sync", { method: "POST" })
+        .then(() => sessionStorage.setItem("chronicle_user_synced", "1"))
+        .catch(() => {});
     } catch {
       // ignore in browsers without storage
     }
-  }, [isSignedIn]);
+  }, [isLoaded, isSignedIn]);
 
   return null;
 }

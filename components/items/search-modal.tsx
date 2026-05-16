@@ -1,127 +1,142 @@
-"use client";
+"use client"
+import { useState, useEffect } from "react"
+import Image from "next/image"
+import { X, Search, Loader2, Plus, Check } from "lucide-react"
+import { createItem } from "@/actions/items"
+import { ITEM_TYPES, TYPE_LABELS } from "@/lib/constants"
+import type { SearchResult } from "@/types"
 
-import { ChronicleItemType, SearchResult } from "@/types";
-import { AnimatePresence, motion } from "framer-motion";
-import { Search, Sparkles } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
-
-import { createItemAction } from "@/actions/items";
-import { ITEM_TYPES } from "@/lib/constants";
-import { useDebounce } from "@/hooks/use-debounce";
-
-export function SearchModal() {
-  const [open, setOpen] = useState(false);
-  const [type, setType] = useState<ChronicleItemType>("movie");
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const debouncedQuery = useDebounce(query, 350);
-
-  async function addFromSearch(result: SearchResult) {
-    startTransition(async () => {
-      await createItemAction({
-        title: result.title,
-        type,
-        status: "planned",
-        description: result.description,
-        imageUrl: result.imageUrl,
-        externalId: result.externalId,
-        externalSource: result.externalSource,
-        metadata: result.metadata,
-      });
-      setOpen(false);
-    });
-  }
+export function SearchModal({ onClose }: { onClose: () => void }) {
+  const [type, setType] = useState<string>("series")
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState<SearchResult[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [added, setAdded] = useState<Set<string>>(new Set())
+  const [adding, setAdding] = useState<string | null>(null)
 
   useEffect(() => {
-    const runSearch = async () => {
-      if (debouncedQuery.length < 2) {
-        setResults([]);
-        return;
+    setResults([])
+    setError("")
+  }, [type])
+
+  useEffect(() => {
+    if (query.length < 2) { setResults([]); return }
+    const t = setTimeout(async () => {
+      setLoading(true)
+      setError("")
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&type=${type}`)
+        const data: SearchResult[] | { error: string } = await res.json()
+        if ("error" in data) setError(data.error)
+        else setResults(data)
+      } catch {
+        setError("Search failed. Check your connection.")
+      } finally {
+        setLoading(false)
       }
+    }, 300)
+    return () => clearTimeout(t)
+  }, [query, type])
 
-      setLoading(true);
-      const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}&type=${type}`);
-      const data = (await response.json()) as { results: SearchResult[] };
-      setResults(data.results ?? []);
-      setLoading(false);
-    };
-
-    void runSearch();
-  }, [debouncedQuery, type]);
+  async function handleAdd(r: SearchResult) {
+    setAdding(r.externalId)
+    try {
+      const progressTotal =
+        type === "anime" ? (r.metadata.episodes as number | undefined) :
+        type === "manga" ? (r.metadata.chapters as number | undefined) :
+        type === "book" ? (r.metadata.pageCount as number | undefined) :
+        undefined
+      await createItem({
+        type,
+        title: r.title,
+        description: r.description,
+        imageUrl: r.imageUrl,
+        externalId: r.externalId,
+        externalSource: r.externalSource,
+        metadata: r.metadata,
+        progressTotal,
+      })
+      setAdded(prev => new Set([...prev, r.externalId]))
+    } catch {
+      alert("Failed to add item")
+    } finally {
+      setAdding(null)
+    }
+  }
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm"
-      >
-        <Search className="h-4 w-4" />
-        Search & add
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setOpen(false)}
+    <div
+      className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+      onClick={e => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-background border rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl">
+        {/* Header */}
+        <div className="p-4 border-b flex items-center gap-3">
+          <select
+            value={type}
+            onChange={e => setType(e.target.value)}
+            className="text-sm border rounded-lg px-3 py-2 bg-background flex-shrink-0"
           >
-            <motion.div
-              className="w-full max-w-2xl space-y-4 rounded-2xl border border-white/10 bg-slate-950/90 p-5 backdrop-blur-2xl"
-              initial={{ y: 40, opacity: 0, scale: 0.98 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 20, opacity: 0, scale: 0.98 }}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="flex items-center gap-3">
-                <Sparkles className="h-5 w-5 text-cyan-300" />
-                <h3 className="text-lg font-semibold">Add new item</h3>
-              </div>
+            {ITEM_TYPES.map(t => <option key={t} value={t}>{TYPE_LABELS[t]}</option>)}
+          </select>
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+            <input
+              autoFocus
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder={`Search for a ${type}...`}
+              className="w-full pl-9 pr-4 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-accent"><X size={18} /></button>
+        </div>
 
-              <div className="grid gap-3 sm:grid-cols-[160px_1fr]">
-                <select
-                  value={type}
-                  onChange={(event) => setType(event.target.value as ChronicleItemType)}
-                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm capitalize"
-                >
-                  {ITEM_TYPES.map((itemType) => (
-                    <option key={itemType} value={itemType} className="bg-slate-900">
-                      {itemType}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Search title, repository, or keyword"
-                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm"
-                />
-              </div>
-
-              <div className="max-h-[420px] space-y-2 overflow-y-auto pr-1">
-                {(loading || isPending) && <p className="text-sm text-muted-foreground">Searching…</p>}
-                {!loading && results.length === 0 && <p className="text-sm text-muted-foreground">No results yet.</p>}
-                {results.map((result) => (
+        {/* Results */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {loading && (
+            <div className="flex justify-center py-12"><Loader2 className="animate-spin text-muted-foreground" size={24} /></div>
+          )}
+          {error && <p className="text-sm text-destructive text-center py-8">{error}</p>}
+          {!loading && !error && results.length === 0 && query.length >= 2 && (
+            <p className="text-sm text-muted-foreground text-center py-8">No results for &ldquo;{query}&rdquo;</p>
+          )}
+          {!loading && query.length < 2 && (
+            <p className="text-sm text-muted-foreground text-center py-8">Type at least 2 characters to search</p>
+          )}
+          <div className="space-y-2">
+            {results.map(r => {
+              const isAdded = added.has(r.externalId)
+              const isAdding = adding === r.externalId
+              return (
+                <div key={r.externalId} className="flex items-center gap-3 p-3 rounded-xl border hover:bg-accent/50 transition-colors">
+                  <div className="w-10 h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0 relative">
+                    {r.imageUrl ? (
+                      <Image src={r.imageUrl} alt={r.title} fill className="object-cover" />
+                    ) : (
+                      <span className="text-2xl flex items-center justify-center h-full">🎬</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium line-clamp-1">{r.title}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{r.description}</p>
+                  </div>
                   <button
-                    key={`${result.externalSource}-${result.externalId}`}
-                    type="button"
-                    onClick={() => void addFromSearch(result)}
-                    className="w-full rounded-xl border border-white/10 bg-white/5 p-3 text-left transition hover:bg-white/10"
+                    onClick={() => !isAdded && handleAdd(r)}
+                    disabled={isAdded || isAdding}
+                    className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                      isAdded ? "bg-green-500 text-white" : "bg-primary text-primary-foreground hover:opacity-90"
+                    } disabled:opacity-50`}
                   >
-                    <p className="font-medium">{result.title}</p>
-                    {result.description && <p className="line-clamp-2 text-xs text-muted-foreground">{result.description}</p>}
+                    {isAdding ? <Loader2 size={14} className="animate-spin" /> : isAdded ? <Check size={14} /> : <Plus size={14} />}
                   </button>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
