@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Prisma } from "@prisma/client";
 
 import { TagPill } from "@/components/common/tag-pill";
@@ -70,14 +71,14 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
         {userTags.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-1">
             {filters.tag && (
-              <a href="/items" className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-xs text-muted-foreground hover:bg-white/10">
+              <Link href="/items" className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-xs text-muted-foreground hover:bg-white/10">
                 ✕ Clear tag
-              </a>
+              </Link>
             )}
             {userTags.map((tag) => (
-              <a key={tag.id} href={`/items?tag=${encodeURIComponent(tag.name)}${filters.type ? `&type=${filters.type}` : ""}${filters.status ? `&status=${filters.status}` : ""}`}>
+              <Link key={tag.id} href={`/items?tag=${encodeURIComponent(tag.name)}${filters.type ? `&type=${filters.type}` : ""}${filters.status ? `&status=${filters.status}` : ""}`}>
                 <TagPill label={tag.name} color={tag.color} active={filters.tag === tag.name} />
-              </a>
+              </Link>
             ))}
           </div>
         )}

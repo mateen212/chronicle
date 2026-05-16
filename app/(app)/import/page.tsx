@@ -2,12 +2,11 @@
 
 import { useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Upload, CheckCircle, AlertCircle } from "lucide-react";
+import { Upload, CheckCircle } from "lucide-react";
 
 import { createItemAction } from "@/actions/items";
 import { GlassCard } from "@/components/common/glass-card";
 import { ProgressBar } from "@/components/common/progress-bar";
-import { Skeleton } from "@/components/ui/skeleton";
 
 type ImportType = "letterboxd" | "myanimelist" | "goodreads";
 type PreviewRow = {

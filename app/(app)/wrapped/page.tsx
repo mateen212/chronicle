@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Download } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { AnimatedSection } from "@/components/common/animated-section";
 import { GlassCard } from "@/components/common/glass-card";
 

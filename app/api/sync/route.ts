@@ -5,7 +5,7 @@ export async function POST() {
   try {
     await syncUser()
     return NextResponse.json({ ok: true })
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: "Sync failed" }, { status: 500 })
   }
 }

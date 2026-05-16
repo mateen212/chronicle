@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { currentUser } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 
@@ -37,7 +38,7 @@ export default async function ProfilePage() {
           <div className="flex items-center gap-4">
             <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white/20">
               {clerkUser?.imageUrl ? (
-                <img src={clerkUser.imageUrl} alt="Avatar" className="h-full w-full object-cover" />
+                <Image src={clerkUser.imageUrl} alt="Avatar" fill className="object-cover" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-violet-500/50 to-cyan-500/50 text-2xl font-bold">
                   {clerkUser?.firstName?.[0] ?? "?"}

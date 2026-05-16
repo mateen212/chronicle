@@ -4,7 +4,7 @@ import { anthropic, AI_MODEL } from "@/lib/ai/client";
 import { prisma } from "@/lib/prisma/client";
 import { requireDbUser } from "@/lib/auth";
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
