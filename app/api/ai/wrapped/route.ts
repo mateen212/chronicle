@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { anthropic, AI_MODEL } from "@/lib/ai/client";
 import { prisma } from "@/lib/prisma/client";
 import { requireDbUser } from "@/lib/auth";
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
