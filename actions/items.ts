@@ -16,6 +16,7 @@ export async function createItem(data: {
   externalSource?: string
   metadata?: Record<string, unknown>
   progressTotal?: number
+  progressCurrent?: number
   status?: string
   rating?: number
 }) {
@@ -33,8 +34,11 @@ export async function createItem(data: {
       externalId: data.externalId,
       externalSource: data.externalSource,
       progressTotal: data.progressTotal,
+      ...(data.progressCurrent !== undefined ? { progressCurrent: data.progressCurrent } : {}),
       rating: data.rating,
       ...(data.status ? { status: data.status as Parameters<typeof prisma.item.create>[0]["data"]["status"] } : {}),
+      ...(data.status === "watching" || data.status === "reading" ? { startedAt: new Date() } : {}),
+      ...(data.status === "completed" ? { completedAt: new Date() } : {}),
       metadata: data.metadata ? { create: { data: data.metadata as import("@prisma/client").Prisma.InputJsonValue } } : undefined,
     },
   })

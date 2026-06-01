@@ -14,6 +14,12 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
   const [error, setError] = useState("")
   const [added, setAdded] = useState<Set<string>>(new Set())
   const [adding, setAdding] = useState<string | null>(null)
+  const [confirmFor, setConfirmFor] = useState<string | null>(null)
+  const [confirmStatus, setConfirmStatus] = useState<string>("planned")
+  const [confirmSeason, setConfirmSeason] = useState<number | undefined>(undefined)
+  const [confirmEpisode, setConfirmEpisode] = useState<number | undefined>(undefined)
+  const [confirmAllSeasons, setConfirmAllSeasons] = useState(false)
+  const [confirmProgressTotal, setConfirmProgressTotal] = useState<number | undefined>(undefined)
 
   useEffect(() => {
     setResults([])
@@ -40,14 +46,36 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
   }, [query, type])
 
   async function handleAdd(r: SearchResult) {
+    // start confirmation flow
+    setConfirmFor(r.externalId)
+    setConfirmStatus("planned")
+    setConfirmSeason(undefined)
+    setConfirmEpisode(undefined)
+    setConfirmAllSeasons(false)
+    const estimated =
+      type === "anime" ? (r.metadata.episodes as number | undefined) :
+      type === "manga" ? (r.metadata.chapters as number | undefined) :
+      type === "book" ? (r.metadata.pageCount as number | undefined) :
+      type === "series" ? (
+        (r.metadata.number_of_episodes as number | undefined) ??
+        (r.metadata.totalEpisodes as number | undefined) ??
+        (Array.isArray(r.metadata.seasons) ? (r.metadata.seasons as any[]).reduce((s, x) => s + (x.episode_count || 0), 0) : undefined)
+      ) :
+      undefined
+    setConfirmProgressTotal(estimated)
+  }
+
+  async function handleConfirmAdd(r: SearchResult) {
     setAdding(r.externalId)
     try {
-      const progressTotal =
+      const progressTotal = confirmProgressTotal ?? (
         type === "anime" ? (r.metadata.episodes as number | undefined) :
         type === "manga" ? (r.metadata.chapters as number | undefined) :
         type === "book" ? (r.metadata.pageCount as number | undefined) :
         undefined
-      await createItem({
+      )
+
+      const payload: any = {
         type,
         title: r.title,
         description: r.description,
@@ -56,8 +84,35 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
         externalSource: r.externalSource,
         metadata: r.metadata,
         progressTotal,
-      })
+      }
+
+      // status and progress
+      if (confirmStatus && confirmStatus !== "planned") {
+        payload.status = confirmStatus
+        if (confirmStatus === "watching") {
+          payload.progressCurrent = confirmEpisode ?? 1
+        }
+        if (confirmStatus === "completed") {
+          if (confirmAllSeasons && progressTotal !== undefined) {
+            payload.progressCurrent = progressTotal
+          } else if (progressTotal !== undefined) {
+            // if user didn't select all seasons, try to mark episode if provided
+            payload.progressCurrent = confirmEpisode ?? progressTotal
+          }
+        }
+      }
+
+      // record season/episode choices in metadata for future reference
+      const extraMeta: any = {}
+      if (confirmAllSeasons) extraMeta.allSeasonsWatched = true
+      if (confirmSeason !== undefined) extraMeta.watchedSeason = confirmSeason
+      if (confirmEpisode !== undefined) extraMeta.watchedEpisode = confirmEpisode
+      if (Object.keys(extraMeta).length > 0) payload.metadata = { ...payload.metadata, ...extraMeta }
+      if (progressTotal !== undefined) payload.progressTotal = progressTotal
+
+      await createItem(payload)
       setAdded(prev => new Set([...prev, r.externalId]))
+      setConfirmFor(null)
     } catch {
       alert("Failed to add item")
     } finally {
@@ -122,15 +177,39 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
                     <p className="text-sm font-medium line-clamp-1">{r.title}</p>
                     <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{r.description}</p>
                   </div>
-                  <button
-                    onClick={() => !isAdded && handleAdd(r)}
-                    disabled={isAdded || isAdding}
-                    className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-                      isAdded ? "bg-green-500 text-white" : "bg-primary text-primary-foreground hover:opacity-90"
-                    } disabled:opacity-50`}
-                  >
-                    {isAdding ? <Loader2 size={14} className="animate-spin" /> : isAdded ? <Check size={14} /> : <Plus size={14} />}
-                  </button>
+                  {confirmFor === r.externalId ? (
+                    <div className="flex flex-col gap-2 p-2 bg-muted rounded-lg border">
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs text-muted-foreground">Add as</label>
+                        <select value={confirmStatus} onChange={e => setConfirmStatus(e.target.value)} className="text-xs border rounded px-2 py-1 bg-background">
+                          <option value="planned">Planned</option>
+                          <option value="watching">Watching</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                        <div className="flex-1" />
+                        <button onClick={() => handleConfirmAdd(r)} disabled={isAdding} className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded">{isAdding ? <Loader2 size={14} className="animate-spin" /> : "Add"}</button>
+                        <button onClick={() => setConfirmFor(null)} className="text-xs bg-muted px-3 py-1 rounded">Cancel</button>
+                      </div>
+                      {(type === "series" || type === "anime") && (
+                        <div className="flex items-center gap-2">
+                          <input type="number" min={1} placeholder="Season" value={confirmSeason ?? ""} onChange={e => setConfirmSeason(e.target.value ? Number(e.target.value) : undefined)} className="w-20 text-xs border rounded px-2 py-1 bg-background" />
+                          <input type="number" min={1} placeholder="Episode" value={confirmEpisode ?? ""} onChange={e => setConfirmEpisode(e.target.value ? Number(e.target.value) : undefined)} className="w-20 text-xs border rounded px-2 py-1 bg-background" />
+                          <label className="text-xs flex items-center gap-2"><input type="checkbox" checked={confirmAllSeasons} onChange={e => setConfirmAllSeasons(e.target.checked)} />All seasons</label>
+                          {confirmProgressTotal !== undefined && <span className="text-xs text-muted-foreground ml-2">Est. {confirmProgressTotal} episodes</span>}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => !isAdded && handleAdd(r)}
+                      disabled={isAdded || isAdding}
+                      className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                        isAdded ? "bg-green-500 text-white" : "bg-primary text-primary-foreground hover:opacity-90"
+                      } disabled:opacity-50`}
+                    >
+                      {isAdding ? <Loader2 size={14} className="animate-spin" /> : isAdded ? <Check size={14} /> : <Plus size={14} />}
+                    </button>
+                  )}
                 </div>
               )
             })}
