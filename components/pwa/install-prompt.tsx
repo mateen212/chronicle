@@ -37,7 +37,7 @@ export function PWAInstallPrompt() {
     const handler = (e: Event) => {
       e.preventDefault()
       setPrompt(e as BeforeInstallPromptEvent)
-      try { (window as any).__chronicle_beforeinstallprompt = e } catch {}
+      try { (window as Window & { __chronicle_beforeinstallprompt?: BeforeInstallPromptEvent }).__chronicle_beforeinstallprompt = e as BeforeInstallPromptEvent } catch {}
       // Show the custom prompt after a short delay
       setTimeout(() => setVisible(true), 3000)
     }
@@ -47,7 +47,7 @@ export function PWAInstallPrompt() {
       setPrompt(null)
       setDismissed(true)
       try { window.localStorage.setItem("pwa-install-dismissed", "1") } catch {}
-      try { delete (window as any).__chronicle_beforeinstallprompt } catch {}
+      try { delete (window as Window & { __chronicle_beforeinstallprompt?: BeforeInstallPromptEvent }).__chronicle_beforeinstallprompt } catch {}
     }
 
     window.addEventListener("beforeinstallprompt", handler)

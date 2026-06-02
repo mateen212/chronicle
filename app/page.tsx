@@ -1,9 +1,8 @@
-import { SignInButton, SignUpButton, SignOutButton } from "@clerk/nextjs";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
-import { GradientBackground } from "@/components/common/gradient-background";
 import { GlassCard } from "@/components/common/glass-card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { PWAInstallButton } from "@/components/pwa/install-button";

@@ -1,7 +1,6 @@
 import { requireDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma/client";
 import { AnimatedSection } from "@/components/common/animated-section";
-import { GlassCard } from "@/components/common/glass-card";
 import { EmptyState } from "@/components/common/empty-state";
 import Image from "next/image";
 import { createItemAction } from "@/actions/items";

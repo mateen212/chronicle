@@ -150,7 +150,6 @@ export function ItemDetailClient({ item }: { item: any }) {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl p-5"
             className="rounded-2xl p-5 bg-card border-border"
           >
             <h2 className="text-sm font-bold mb-4 flex items-center gap-2">
