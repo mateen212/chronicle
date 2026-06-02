@@ -34,7 +34,7 @@ export default function WrappedPage() {
 
   return (
     <div className="space-y-6">
-      <AnimatedSection className="rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/20 via-indigo-500/10 to-cyan-500/20 p-6 backdrop-blur-xl">
+      <AnimatedSection className="rounded-3xl border border-border bg-card p-6 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <Sparkles className="h-6 w-6 text-yellow-400" />
           <div>
@@ -45,13 +45,13 @@ export default function WrappedPage() {
       </AnimatedSection>
 
       {!narrative && (
-        <GlassCard className="text-center space-y-4 py-12">
+        <GlassCard className="text-center space-y-4 py-12 bg-popover border-border">
           <p className="text-muted-foreground">Ready to see your {year} in review?</p>
-          <motion.button
+            <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => void generate()}
             disabled={loading}
-            className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-600 px-6 py-3 font-semibold transition hover:opacity-90 disabled:opacity-50"
+            className="rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-semibold transition hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "Generating…" : `Generate my ${year} Wrapped`}
           </motion.button>
@@ -65,10 +65,10 @@ export default function WrappedPage() {
           className="mx-auto w-full max-w-[600px]"
         >
           <div
-            className="relative h-[800px] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-violet-950 to-slate-950 p-8 shadow-2xl"
+            className="relative h-[800px] w-full overflow-hidden rounded-3xl bg-card p-8 shadow-2xl"
             id="wrapped-card"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.3),transparent_60%)]" />
+            <div className="absolute inset-0" />
             <div className="relative z-10 flex h-full flex-col">
               <div className="flex items-center gap-2 mb-6">
                 <Sparkles className="h-5 w-5 text-yellow-400" />

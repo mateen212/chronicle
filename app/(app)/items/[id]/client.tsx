@@ -77,7 +77,7 @@ export function ItemDetailClient({ item }: { item: any }) {
             className="object-cover object-top"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-popover/50 to-background" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/60 to-transparent" />
         </div>
       )}
@@ -151,7 +151,7 @@ export function ItemDetailClient({ item }: { item: any }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl p-5"
-            style={{ background: "oklch(0.14 0.018 255 / 90%)", border: "1px solid rgba(255,255,255,0.07)" }}
+            className="rounded-2xl p-5 bg-card border-border"
           >
             <h2 className="text-sm font-bold mb-4 flex items-center gap-2">
               {isTV ? "Episode Progress" : "Progress"}
@@ -167,7 +167,7 @@ export function ItemDetailClient({ item }: { item: any }) {
             <div className="flex items-center gap-4 mb-4">
               <button
                 onClick={() => handleProgress(-1)}
-                className="w-9 h-9 rounded-xl border border-white/10 flex items-center justify-center hover:bg-white/8 transition-colors"
+                className="w-9 h-9 rounded-xl border border-border flex items-center justify-center hover:bg-popover/6 transition-colors"
               >
                 <Minus size={16} />
               </button>
@@ -179,7 +179,7 @@ export function ItemDetailClient({ item }: { item: any }) {
               </div>
               <button
                 onClick={() => handleProgress(1)}
-                className="w-9 h-9 rounded-xl bg-[#F5C518] text-black flex items-center justify-center hover:bg-[#F5C518]/90 transition-colors"
+                className="w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"
               >
                 <Plus size={16} />
               </button>
@@ -187,7 +187,7 @@ export function ItemDetailClient({ item }: { item: any }) {
 
             {item.progressTotal && (
               <>
-                <div className="h-2 rounded-full overflow-hidden mb-2" style={{ background: "rgba(255,255,255,0.08)" }}>
+                <div className="h-2 rounded-full overflow-hidden mb-2 bg-popover/20">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{ width: `${pct}%`, background: "#F5C518" }}
@@ -208,8 +208,7 @@ export function ItemDetailClient({ item }: { item: any }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="rounded-2xl p-5"
-            style={{ background: "oklch(0.14 0.018 255 / 90%)", border: "1px solid rgba(255,255,255,0.07)" }}
+            className="rounded-2xl p-5 bg-card border-border"
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-bold">Notes & Review</h2>
@@ -220,7 +219,7 @@ export function ItemDetailClient({ item }: { item: any }) {
               onChange={(e) => setNotes(e.target.value)}
               onBlur={handleSaveNotes}
               placeholder="What did you think? Any thoughts…"
-              className="w-full text-sm bg-black/20 border border-white/8 rounded-xl p-3 min-h-32 resize-none focus:outline-none focus:border-[#F5C518]/40 transition-colors placeholder:text-muted-foreground/40"
+              className="w-full text-sm bg-input border border-border rounded-xl p-3 min-h-32 resize-none focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground/40"
             />
           </motion.div>
 
@@ -230,8 +229,7 @@ export function ItemDetailClient({ item }: { item: any }) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.08 }}
-              className="rounded-2xl p-5 sm:col-span-2"
-              style={{ background: "oklch(0.14 0.018 255 / 90%)", border: "1px solid rgba(255,255,255,0.07)" }}
+              className="rounded-2xl p-5 sm:col-span-2 bg-card border-border"
             >
               <h2 className="text-sm font-bold mb-3">About</h2>
               <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>

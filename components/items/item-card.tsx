@@ -66,7 +66,7 @@ export function ItemCard({ item }: { item: Item }) {
   }
 
   return (
-    <div className="group relative rounded-2xl overflow-hidden card-hover" style={{ background: "oklch(0.14 0.018 255 / 90%)", border: "1px solid rgba(255,255,255,0.07)" }}>
+    <div className="group relative rounded-2xl overflow-hidden card-hover bg-card border-border">
       <Link href={`/items/${item.id}`}>
         {/* Poster */}
         <div className="aspect-[2/3] relative overflow-hidden">
@@ -88,7 +88,7 @@ export function ItemCard({ item }: { item: Item }) {
           )}
 
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-popover/80 via-transparent to-transparent" />
 
           {/* Status badge */}
           <div className={cn("absolute top-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm", statusStyle.bg, statusStyle.text)}>
@@ -97,7 +97,7 @@ export function ItemCard({ item }: { item: Item }) {
 
           {/* Rating */}
           {item.rating && (
-            <div className="absolute top-2 right-2 flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-black/60 text-[#F5C518]">
+            <div className="absolute top-2 right-2 flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-popover/60 text-primary">
               <Star size={9} fill="currentColor" />{item.rating}
             </div>
           )}
@@ -105,7 +105,7 @@ export function ItemCard({ item }: { item: Item }) {
           {/* Progress pill at bottom of poster */}
           {item.progressTotal && progress > 0 && (
             <div className="absolute bottom-0 left-0 right-0">
-              <div className="h-1 w-full bg-black/40">
+              <div className="h-1 w-full bg-popover/40">
                 <div
                   className="h-full transition-all duration-500"
                   style={{ width: `${progressPct}%`, background: accent }}

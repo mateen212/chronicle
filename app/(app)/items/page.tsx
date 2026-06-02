@@ -75,16 +75,16 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
         <form className="grid gap-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           <div className="relative">
             <Filter size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
+                <input
               name="q"
               defaultValue={filters.q}
               placeholder="Search library…"
-              className="w-full pl-8 pr-3 py-2 text-sm rounded-xl bg-black/30 border border-white/10 focus:outline-none focus:border-[#F5C518]/40 placeholder:text-muted-foreground/50"
+                  className="w-full pl-8 pr-3 py-2 text-sm rounded-xl bg-input border border-border focus:outline-none focus:border-primary placeholder:text-muted-foreground/50"
             />
           </div>
 
           {/* Type filter */}
-          <select name="type" defaultValue={filters.type ?? ""} className="text-sm bg-black/30 border border-white/10 rounded-xl px-3 py-2 focus:outline-none focus:border-[#F5C518]/40">
+              <select name="type" defaultValue={filters.type ?? ""} className="text-sm bg-input border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary">
             <option value="">All types</option>
             {ITEM_TYPES.map((t) => (
               <option key={t} value={t} className="bg-[#141A22] capitalize">{t.charAt(0).toUpperCase() + t.slice(1)}</option>
@@ -92,7 +92,7 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
           </select>
 
           {/* Status filter */}
-          <select name="status" defaultValue={filters.status ?? ""} className="text-sm bg-black/30 border border-white/10 rounded-xl px-3 py-2 focus:outline-none focus:border-[#F5C518]/40">
+              <select name="status" defaultValue={filters.status ?? ""} className="text-sm bg-input border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary">
             <option value="">All statuses</option>
             {STATUS_OPTIONS.map((s) => (
               <option key={s.value} value={s.value} className="bg-[#141A22]">{s.label}</option>
@@ -100,7 +100,7 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
           </select>
 
           {/* Sort */}
-          <select name="sort" defaultValue={filters.sort ?? "recent"} className="text-sm bg-black/30 border border-white/10 rounded-xl px-3 py-2 focus:outline-none focus:border-[#F5C518]/40">
+              <select name="sort" defaultValue={filters.sort ?? "recent"} className="text-sm bg-input border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary">
             <option value="recent" className="bg-[#141A22]">Recently Updated</option>
             <option value="added" className="bg-[#141A22]">Recently Added</option>
             <option value="alpha" className="bg-[#141A22]">Alphabetical</option>
@@ -123,7 +123,7 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
                 href={`/items?${filters.q ? `q=${filters.q}&` : ""}type=${t}${filters.status ? `&status=${filters.status}` : ""}${filters.sort ? `&sort=${filters.sort}` : ""}`}
                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
                   active
-                    ? "bg-[#F5C518]/15 text-[#F5C518] border border-[#F5C518]/30"
+                        ? "bg-primary/15 text-primary border border-primary/30"
                     : "bg-white/5 text-muted-foreground hover:bg-white/10 border border-white/8"
                 }`}
               >
@@ -133,10 +133,10 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
             );
           })}
           {filters.type && (
-            <Link
-              href={`/items?${filters.q ? `q=${filters.q}&` : ""}${filters.status ? `status=${filters.status}&` : ""}${filters.sort ? `sort=${filters.sort}` : ""}`}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs text-muted-foreground border border-white/8 hover:bg-white/5"
-            >
+                <Link
+                  href={`/items?${filters.q ? `q=${filters.q}&` : ""}${filters.status ? `status=${filters.status}&` : ""}${filters.sort ? `sort=${filters.sort}` : ""}`}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs text-muted-foreground border border-border hover:bg-popover/6"
+                >
               ✕ Clear type
             </Link>
           )}
@@ -145,11 +145,11 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
         {/* Tag filters */}
         {userTags.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-1">
-            {filters.tag && (
-              <Link href="/items" className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs text-muted-foreground hover:bg-white/10">
-                ✕ Clear tag
-              </Link>
-            )}
+                {filters.tag && (
+                  <Link href="/items" className="inline-flex items-center gap-1 rounded-full border border-border bg-popover/6 px-2.5 py-0.5 text-xs text-muted-foreground hover:bg-popover/8">
+                    ✕ Clear tag
+                  </Link>
+                )}
             {userTags.map((tag) => (
               <Link key={tag.id} href={`/items?tag=${encodeURIComponent(tag.name)}${filters.type ? `&type=${filters.type}` : ""}${filters.status ? `&status=${filters.status}` : ""}`}>
                 <TagPill label={tag.name} color={tag.color} active={filters.tag === tag.name} />

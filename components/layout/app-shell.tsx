@@ -12,7 +12,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false)
 
   return (
-    <div className="flex h-screen" style={{ background: "oklch(0.097 0.015 252)" }}>
+    <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar desktop */}
       <div className="hidden lg:flex flex-shrink-0"><Sidebar /></div>
 
@@ -23,7 +23,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+            className="fixed inset-0 z-40 bg-overlay lg:hidden"
             onClick={() => setOpen(false)}
           />
         )}
@@ -42,10 +42,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header
-          className="h-14 flex items-center justify-between px-4 flex-shrink-0"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "oklch(0.12 0.018 255 / 80%)", backdropFilter: "blur(12px)" }}
-        >
+        <header className="h-14 flex items-center justify-between px-4 flex-shrink-0 border-b border-border bg-popover/80 backdrop-blur-xl">
           <button
             onClick={() => setOpen(true)}
             className="lg:hidden p-2 rounded-xl hover:bg-white/8 text-muted-foreground transition-colors"
@@ -56,8 +53,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2 ml-auto">
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-2.5 text-sm text-muted-foreground rounded-xl px-3.5 py-2 transition-all hover:text-foreground group"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+              className="flex items-center gap-2.5 text-sm text-muted-foreground rounded-xl px-3.5 py-2 transition-all hover:text-foreground group bg-input border-border"
             >
               <Search size={14} className="group-hover:text-[#F5C518] transition-colors" />
               <span className="hidden sm:inline">Search &amp; add</span>

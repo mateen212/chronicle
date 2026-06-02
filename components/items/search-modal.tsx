@@ -209,28 +209,26 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
-      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)" }}
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-overlay backdrop-blur-lg"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <motion.div
         initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 40 }}
         transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full sm:max-w-2xl max-h-[95dvh] sm:max-h-[85vh] flex flex-col rounded-t-3xl sm:rounded-2xl overflow-hidden"
-        style={{ background: "#141A22", border: "1px solid rgba(255,255,255,0.08)" }}
+        className="relative w-full sm:max-w-2xl max-h-[95dvh] sm:max-h-[85vh] flex flex-col rounded-t-3xl sm:rounded-2xl overflow-hidden bg-popover border-border"
       >
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 pt-4 pb-3 border-b border-white/8 flex-shrink-0">
+        <div className="flex items-center gap-3 px-4 pt-4 pb-3 border-b border-border flex-shrink-0">
           {step !== "search" && (
-            <button onClick={() => setStep(step === "details" ? "status" : "search")} className="p-1.5 rounded-lg hover:bg-white/8 text-muted-foreground transition-colors">
+            <button onClick={() => setStep(step === "details" ? "status" : "search")} className="p-1.5 rounded-lg hover:bg-popover/6 text-muted-foreground transition-colors">
               <ChevronLeft size={18} />
             </button>
           )}
-          <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0">
             {step === "search" ? (
-              <div className="flex gap-1 p-1 rounded-xl bg-black/30 overflow-x-auto">
+              <div className="flex gap-1 p-1 rounded-xl bg-input overflow-x-auto">
                 {ITEM_TYPES.map((t) => (
-                  <button key={t} onClick={() => setType(t)} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${type === t ? "bg-[#F5C518] text-black" : "text-muted-foreground hover:text-foreground"}`}>
+                  <button key={t} onClick={() => setType(t)} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${type === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
                     {TYPE_ICONS[t]}<span className="hidden sm:inline">{TYPE_LABELS[t]}</span>
                   </button>
                 ))}
@@ -251,17 +249,17 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/8 text-muted-foreground transition-colors flex-shrink-0"><X size={18} /></button>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-popover/6 text-muted-foreground transition-colors flex-shrink-0"><X size={18} /></button>
         </div>
 
         {/* Search input */}
         {step === "search" && (
-          <div className="px-4 py-3 border-b border-white/8 flex-shrink-0">
+          <div className="px-4 py-3 border-b border-border flex-shrink-0">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
               <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)}
                 placeholder={`Search for a ${TYPE_LABELS[type]?.toLowerCase() ?? type}...`}
-                className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl bg-black/30 border border-white/10 focus:outline-none focus:border-[#F5C518]/50 focus:ring-1 focus:ring-[#F5C518]/20 transition-all placeholder:text-muted-foreground/60" />
+                className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl bg-input border border-border focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/60" />
             </div>
           </div>
         )}
@@ -286,10 +284,10 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
                 <div className="space-y-2">
                   {results.map((r) => {
                     const isAdded = addedIds.has(r.externalId)
-                    return (
+                      return (
                       <motion.div key={r.externalId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center gap-3 p-3 rounded-xl border border-white/6 bg-black/20 hover:border-white/12 hover:bg-black/30 transition-all">
-                        <div className="w-12 h-[72px] rounded-lg overflow-hidden bg-white/5 flex-shrink-0 relative">
+                        className="flex items-center gap-3 p-3 rounded-xl border border-border bg-popover/20 hover:border-border hover:bg-popover/30 transition-all">
+                        <div className="w-12 h-[72px] rounded-lg overflow-hidden bg-muted flex-shrink-0 relative">
                           {r.imageUrl ? <Image src={r.imageUrl} alt={r.title} fill className="object-cover" /> : <div className="flex items-center justify-center h-full text-xl text-muted-foreground">{TYPE_ICONS[type]}</div>}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -304,7 +302,7 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
                             <Check size={14} className="text-emerald-400" />
                           </div>
                         ) : (
-                          <button onClick={() => handleSelect(r)} className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F5C518] text-black text-xs font-semibold hover:bg-[#F5C518]/90 transition-colors whitespace-nowrap">
+                          <button onClick={() => handleSelect(r)} className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap">
                             Add <ChevronRight size={12} />
                           </button>
                         )}
@@ -363,14 +361,14 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
                         <label className="text-xs text-muted-foreground mb-1.5 block">Season</label>
                         {tvDetails ? (
                           <select value={selSeason} onChange={(e) => { setSelSeason(Number(e.target.value)); setSelEpisode(1) }}
-                            className="w-full text-sm bg-black/30 border border-white/10 rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#F5C518]/50">
+                            className="w-full text-sm bg-input border border-border rounded-xl px-3 py-2.5 focus:outline-none focus:border-primary">
                             {tvDetails.seasons.filter(s => s.seasonNumber > 0).map((s) => (
                               <option key={s.seasonNumber} value={s.seasonNumber} className="bg-[#141A22]">Season {s.seasonNumber} ({s.episodeCount} ep)</option>
                             ))}
                           </select>
                         ) : (
                           <input type="number" min={1} value={selSeason} onChange={(e) => setSelSeason(Math.max(1, Number(e.target.value)))}
-                            className="w-full text-sm bg-black/30 border border-white/10 rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#F5C518]/50" />
+                            className="w-full text-sm bg-input border border-border rounded-xl px-3 py-2.5 focus:outline-none focus:border-primary" />
                         )}
                       </div>
                       {tvStatus !== "completed_season" && (
@@ -378,7 +376,7 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
                           <label className="text-xs text-muted-foreground mb-1.5 block">Episode</label>
                           <input type="number" min={1} max={maxEpForSeason} value={selEpisode}
                             onChange={(e) => setSelEpisode(Math.max(1, Math.min(maxEpForSeason, Number(e.target.value))))}
-                            className="w-full text-sm bg-black/30 border border-white/10 rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#F5C518]/50" />
+                            className="w-full text-sm bg-input border border-border rounded-xl px-3 py-2.5 focus:outline-none focus:border-primary" />
                         </div>
                       )}
                     </div>
@@ -397,7 +395,7 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
                     <div>
                       <label className="text-xs text-muted-foreground mb-2 block">Date watched</label>
                       <input type="date" value={watchedDate} onChange={(e) => setWatchedDate(e.target.value)}
-                        className="text-sm bg-black/30 border border-white/10 rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#F5C518]/50 w-full" />
+                        className="text-sm bg-input border border-border rounded-xl px-3 py-2.5 focus:outline-none focus:border-primary w-full" />
                     </div>
                     <div>
                       <label className="text-xs text-muted-foreground mb-2 block">Rating (optional)</label>
@@ -406,7 +404,7 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
                     <div>
                       <label className="text-xs text-muted-foreground mb-2 block">Review / Notes (optional)</label>
                       <textarea value={review} onChange={(e) => setReview(e.target.value)} placeholder="What did you think?" rows={3}
-                        className="w-full text-sm bg-black/30 border border-white/10 rounded-xl px-3 py-2.5 focus:outline-none focus:border-[#F5C518]/50 resize-none placeholder:text-muted-foreground/50" />
+                        className="w-full text-sm bg-input border border-border rounded-xl px-3 py-2.5 focus:outline-none focus:border-primary resize-none placeholder:text-muted-foreground/50" />
                     </div>
                   </div>
                 )}
@@ -423,8 +421,8 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
                 <p className="text-sm text-muted-foreground mt-1">Added as <span className="text-foreground font-medium">{currentStatusLabel}</span></p>
                 <div className="flex gap-3 mt-6">
                   <button onClick={() => { setStep("search"); setSelected(null); setQuery("") }}
-                    className="px-4 py-2 rounded-xl border border-white/10 text-sm hover:bg-white/5 transition-colors">Add another</button>
-                  <button onClick={onClose} className="px-4 py-2 rounded-xl bg-[#F5C518] text-black text-sm font-semibold hover:bg-[#F5C518]/90 transition-colors">Done</button>
+                    className="px-4 py-2 rounded-xl border border-border text-sm hover:bg-popover/6 transition-colors">Add another</button>
+                  <button onClick={onClose} className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">Done</button>
                 </div>
               </motion.div>
             )}
@@ -433,14 +431,14 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
 
         {/* Footer CTA */}
         {(step === "status" || step === "details") && (
-          <div className="px-4 py-4 border-t border-white/8 flex-shrink-0">
+          <div className="px-4 py-4 border-t border-border flex-shrink-0">
             {step === "status" && needsDetailsStep ? (
-              <button onClick={() => setStep("details")} className="w-full py-3 rounded-xl bg-[#F5C518] text-black text-sm font-semibold hover:bg-[#F5C518]/90 transition-colors flex items-center justify-center gap-2">
+              <button onClick={() => setStep("details")} className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
                 Continue <ChevronRight size={16} />
               </button>
             ) : (
               <button onClick={handleAdd} disabled={adding}
-                className="w-full py-3 rounded-xl bg-[#F5C518] text-black text-sm font-semibold hover:bg-[#F5C518]/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+                className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
                 {adding && <Loader2 size={16} className="animate-spin" />}
                 Add to Chronicle
               </button>

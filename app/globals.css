@@ -83,6 +83,8 @@
   --sidebar-accent-foreground: oklch(0.2 0.015 258);
   --sidebar-border: oklch(0.9 0.01 250);
   --sidebar-ring: oklch(0.78 0.155 88 / 60%);
+  /* Overlay used for modals and dimming content */
+  --overlay: rgba(2,6,23,0.6);
 }
 
 /* ── Dark theme (primary) — cinematic premium ── */
@@ -121,7 +123,12 @@
   --sidebar-accent-foreground: oklch(0.93 0.008 250);
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: oklch(0.83 0.155 88 / 40%);
+  /* Dark overlay variant */
+  --overlay: rgba(0,0,0,0.6);
 }
+
+/* Utility class for modal / backdrop overlays that respects theme tokens */
+.bg-overlay { background: var(--overlay); }
 
 @layer base {
   * {
