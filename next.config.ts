@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "avatars.githubusercontent.com" },
       { protocol: "https", hostname: "media.rawg.io" },
+      { protocol: "https", hostname: "img.clerk.com" },
     ],
   },
   experimental: {

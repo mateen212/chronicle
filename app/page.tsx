@@ -1,10 +1,11 @@
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignInButton, SignUpButton, SignOutButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 import { GradientBackground } from "@/components/common/gradient-background";
 import { GlassCard } from "@/components/common/glass-card";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 import { ParallaxHeroClient } from "@/components/landing/parallax-hero-client";
 const ParallaxHero = ParallaxHeroClient;
@@ -41,7 +42,37 @@ export default async function Home() {
 
   return (
     <main className="relative min-h-screen overflow-hidden">
-      <GradientBackground />
+
+      {/* Top navbar */}
+      <header className="z-20 w-full border-b border-border bg-card/80 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
+          <Link href="/" className="inline-flex items-center gap-3">
+            <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center text-primary font-semibold">C</div>
+            <span className="font-semibold text-foreground">Chronicle</span>
+          </Link>
+
+          <div className="ml-auto flex items-center gap-3">
+            <ThemeToggle />
+            {!userId ? (
+              <>
+                <SignInButton>
+                  <button className="rounded-md px-3 py-1.5 text-sm bg-popover/6 hover:bg-popover/8">Sign in</button>
+                </SignInButton>
+                <SignUpButton>
+                  <button className="rounded-md px-3 py-1.5 text-sm bg-primary text-primary-foreground">Register</button>
+                </SignUpButton>
+              </>
+            ) : (
+              <>
+                <Link href="/dashboard" className="rounded-md px-3 py-1.5 text-sm bg-primary text-primary-foreground">Dashboard</Link>
+                <SignOutButton>
+                  <button className="rounded-md px-3 py-1.5 text-sm bg-popover/6 hover:bg-popover/8">Sign out</button>
+                </SignOutButton>
+              </>
+            )}
+          </div>
+        </div>
+      </header>
 
       {/* Hero — parallax on client, static fallback on server */}
       <section className="relative flex min-h-screen flex-col items-center justify-center px-4 text-center">
