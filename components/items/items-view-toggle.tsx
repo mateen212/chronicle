@@ -23,13 +23,13 @@ export function ItemsViewToggle({ items }: ItemsViewToggleProps) {
         <div className="flex gap-2">
           <button
             onClick={() => setView("grid")}
-            className={`rounded-xl border p-2 transition ${view === "grid" ? "border-violet-400/50 bg-violet-500/20 text-violet-300" : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10"}`}
+            className={`rounded-xl p-2 transition ${view === "grid" ? "bg-primary/10 border border-primary/20 text-primary" : "bg-popover/6 text-muted-foreground hover:bg-popover/8 border border-border"}`}
           >
             <LayoutGrid className="h-4 w-4" />
           </button>
           <button
             onClick={() => setView("calendar")}
-            className={`rounded-xl border p-2 transition ${view === "calendar" ? "border-cyan-400/50 bg-cyan-500/20 text-cyan-300" : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10"}`}
+            className={`rounded-xl p-2 transition ${view === "calendar" ? "bg-primary/10 border border-primary/20 text-primary" : "bg-popover/6 text-muted-foreground hover:bg-popover/8 border border-border"}`}
           >
             <Calendar className="h-4 w-4" />
           </button>
@@ -39,7 +39,7 @@ export function ItemsViewToggle({ items }: ItemsViewToggleProps) {
       {items.length === 0 ? (
         <EmptyState title="No items found" description="Try changing filters or adding new entries using Search & add." />
       ) : view === "calendar" ? (
-        <div className="rounded-2xl border border-white/10 bg-white/3 p-4">
+        <div className="rounded-2xl p-4 bg-card border-border">
           <CalendarView items={items} />
         </div>
       ) : (

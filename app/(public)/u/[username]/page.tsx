@@ -38,7 +38,7 @@ export default async function PublicProfilePage({ params }: Props) {
   ]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950/30 to-slate-950 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-3xl space-y-6">
         <GlassCard className="flex items-center gap-4">
           {user.image && (
@@ -83,7 +83,7 @@ export default async function PublicProfilePage({ params }: Props) {
                     <p className="truncate font-medium">{item.title}</p>
                   </div>
                   {item.rating && (
-                    <span className="text-sm text-yellow-400">★ {item.rating}/10</span>
+                    <span className="text-sm text-primary">★ {item.rating}/10</span>
                   )}
                 </div>
               ))}
@@ -98,7 +98,7 @@ export default async function PublicProfilePage({ params }: Props) {
               {topRated.map((item) => (
                 <div key={item.id} className="flex items-center justify-between gap-3">
                   <p className="truncate font-medium">{item.title}</p>
-                  <span className="text-sm text-yellow-400">★ {item.rating}/10</span>
+                  <span className="text-sm text-primary">★ {item.rating}/10</span>
                 </div>
               ))}
             </div>

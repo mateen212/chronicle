@@ -45,14 +45,14 @@ export function CalendarView({ items }: CalendarViewProps) {
       <div className="flex items-center justify-between">
         <button
           onClick={() => setMonth((m) => subMonths(m, 1))}
-          className="rounded-xl border border-white/15 p-1.5 hover:bg-white/10 transition"
+          className="rounded-xl border border-border p-1.5 hover:bg-popover/8 transition"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
         <span className="text-sm font-semibold">{format(month, "MMMM yyyy")}</span>
         <button
           onClick={() => setMonth((m) => addMonths(m, 1))}
-          className="rounded-xl border border-white/15 p-1.5 hover:bg-white/10 transition"
+          className="rounded-xl border border-border p-1.5 hover:bg-popover/8 transition"
         >
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -83,10 +83,10 @@ export function CalendarView({ items }: CalendarViewProps) {
               <div
                 key={day.toISOString()}
                 className={`min-h-[3.5rem] rounded-xl border p-1 ${
-                  isToday ? "border-violet-500/50 bg-violet-500/10" : "border-white/5 bg-white/3"
+                  isToday ? "border-primary/50 bg-primary/10" : "border-border bg-popover/6"
                 }`}
               >
-                <p className={`text-xs font-medium ${isToday ? "text-violet-300" : "text-muted-foreground"}`}>
+                <p className={`text-xs font-medium ${isToday ? "text-primary" : "text-muted-foreground"}`}>
                   {format(day, "d")}
                 </p>
                 <div className="mt-0.5 flex flex-wrap gap-0.5">

@@ -129,12 +129,10 @@ export default function ImportPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/20 via-indigo-500/10 to-cyan-500/20 p-6 backdrop-blur-xl">
-        <p className="text-xs uppercase tracking-widest text-cyan-200/80">Import</p>
-        <h1 className="mt-2 text-3xl font-bold">Import your library</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Import from Letterboxd, MyAnimeList, or Goodreads exports.
-        </p>
+      <div className="rounded-3xl p-6 bg-card border-border">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Import</p>
+        <h1 className="mt-2 text-3xl font-semibold text-foreground">Import your library</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Import from Letterboxd, MyAnimeList, or Goodreads exports.</p>
       </div>
 
       <GlassCard className="space-y-4">
@@ -143,10 +141,10 @@ export default function ImportPage() {
             <button
               key={t}
               onClick={() => { setImportType(t); setPreview([]); setSummary(null); }}
-              className={`rounded-xl border px-4 py-2 text-sm capitalize transition ${
+              className={`rounded-xl px-4 py-2 text-sm capitalize transition ${
                 importType === t
-                  ? "border-violet-500/60 bg-violet-500/20 font-medium"
-                  : "border-white/15 bg-white/5 hover:bg-white/10"
+                  ? "bg-primary/10 border border-primary/20 font-medium text-primary"
+                  : "bg-popover/6 text-muted-foreground border border-border hover:bg-popover/8"
               }`}
             >
               {t === "myanimelist" ? "MyAnimeList" : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -161,7 +159,7 @@ export default function ImportPage() {
         </p>
 
         <div
-          className="flex cursor-pointer flex-col items-center gap-3 rounded-xl border-2 border-dashed border-white/20 p-8 transition hover:border-white/30"
+          className="flex cursor-pointer flex-col items-center gap-3 rounded-xl border-2 border-dashed border-border p-8 transition bg-input hover:bg-input/95"
           onClick={() => fileRef.current?.click()}
         >
           <Upload className="h-8 w-8 text-muted-foreground" />
@@ -185,11 +183,11 @@ export default function ImportPage() {
           >
             <GlassCard className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="font-semibold">{preview.length} items to import</h2>
+                <h2 className="font-semibold text-foreground">{preview.length} items to import</h2>
                 <button
                   onClick={handleImport}
                   disabled={importing}
-                  className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium transition hover:bg-violet-700 disabled:opacity-50"
+                  className="rounded-xl px-4 py-2 text-sm font-medium bg-primary text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
                 >
                   {importing ? "Importing…" : "Confirm import"}
                 </button>
@@ -205,7 +203,7 @@ export default function ImportPage() {
               <div className="max-h-64 overflow-y-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-white/10 text-left text-xs text-muted-foreground">
+                    <tr className="border-b border-border text-left text-xs text-muted-foreground">
                       <th className="py-2 pr-4">Title</th>
                       <th className="py-2 pr-4">Type</th>
                       <th className="py-2 pr-4">Status</th>
@@ -214,8 +212,8 @@ export default function ImportPage() {
                   </thead>
                   <tbody>
                     {preview.map((row, i) => (
-                      <tr key={i} className="border-b border-white/5">
-                        <td className="py-1 pr-4 max-w-[200px] truncate">{row.title}</td>
+                      <tr key={i} className="border-b border-popover/6">
+                        <td className="py-1 pr-4 max-w-[200px] truncate text-foreground">{row.title}</td>
                         <td className="py-1 pr-4 capitalize text-muted-foreground">{row.type}</td>
                         <td className="py-1 pr-4 capitalize text-muted-foreground">{row.status}</td>
                         <td className="py-1 text-muted-foreground">{row.rating ?? "—"}</td>

@@ -2,43 +2,86 @@
 import { useState } from "react"
 import { Sidebar } from "./sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { PWAInstallButton } from "@/components/pwa/install-button"
 import { UserButton } from "@clerk/nextjs"
-import { Menu } from "lucide-react"
+import { Menu, Search } from "lucide-react"
 import { SearchModal } from "@/components/items/search-modal"
+import { motion, AnimatePresence } from "framer-motion"
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar desktop */}
-      <div className="hidden lg:flex"><Sidebar /></div>
+      <div className="hidden lg:flex flex-shrink-0"><Sidebar /></div>
+
       {/* Mobile overlay */}
-      {open && <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setOpen(false)} />}
-      <div className={`fixed inset-y-0 left-0 z-50 lg:hidden transition-transform duration-200 ${open ? "translate-x-0" : "-translate-x-full"}`}>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-overlay lg:hidden"
+            onClick={() => setOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile sidebar */}
+      <motion.div
+        className="fixed inset-y-0 left-0 z-50 lg:hidden"
+        initial={false}
+        animate={{ x: open ? 0 : "-100%" }}
+        transition={{ type: "tween", duration: 0.22 }}
+      >
         <Sidebar onNav={() => setOpen(false)} />
-      </div>
+      </motion.div>
+
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-14 border-b flex items-center justify-between px-4 flex-shrink-0">
-          <button onClick={() => setOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-accent">
+        {/* Header */}
+        <header className="h-14 flex items-center justify-between px-4 flex-shrink-0 border-b border-border bg-popover/80 backdrop-blur-xl safe-area-top safe-area-horizontal">
+          <button
+            onClick={() => setOpen(true)}
+            className="lg:hidden p-2 rounded-xl hover:bg-white/8 text-muted-foreground transition-colors"
+          >
             <Menu size={20} />
           </button>
+
           <div className="flex items-center gap-2 ml-auto">
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-2 text-sm text-muted-foreground border rounded-lg px-3 py-1.5 hover:bg-accent transition-colors"
+              className="flex items-center gap-2.5 text-sm text-muted-foreground rounded-xl px-3.5 py-2 transition-all hover:text-foreground group bg-input border-border"
             >
-              🔍 Search &amp; add...
+              <Search size={14} className="group-hover:text-primary transition-colors" />
+              <span className="hidden sm:inline">Search &amp; add</span>
+              <kbd className="hidden sm:inline text-xs text-muted-foreground/50 font-mono">⌘K</kbd>
             </button>
+            <div className="lg:hidden">
+              <PWAInstallButton />
+            </div>
             <ThemeToggle />
-            <UserButton />
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "w-8 h-8",
+                },
+              }}
+            />
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto">{children}</main>
+
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
       </div>
-      {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
+
+      <AnimatePresence>
+        {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
+      </AnimatePresence>
     </div>
   )
 }

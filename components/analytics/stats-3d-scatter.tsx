@@ -100,7 +100,7 @@ export function Stats3DScatter({ items }: { items: Array<{ type: string; title: 
   if (points.length < 3) return null;
 
   return (
-    <div className="h-80 w-full overflow-hidden rounded-2xl border border-white/10">
+    <div className="h-80 w-full overflow-hidden rounded-2xl border border-border">
       <Canvas camera={{ position: [12, 8, 18], fov: 50 }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[15, 15, 15]} intensity={1} />

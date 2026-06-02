@@ -29,15 +29,15 @@ export default async function CollectionDetailPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
-      <AnimatedSection className="rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/20 via-indigo-500/10 to-cyan-500/20 p-6 backdrop-blur-xl">
-        <Link href="/collections" className="text-xs text-cyan-300 hover:underline">
+      <AnimatedSection className="rounded-3xl p-6 bg-card border-border">
+        <Link href="/collections" className="text-xs text-primary hover:underline">
           ← Collections
         </Link>
-        <h1 className="mt-2 text-2xl font-bold">{collection.name}</h1>
+        <h1 className="mt-2 text-2xl font-semibold text-foreground">{collection.name}</h1>
         {collection.description && (
           <p className="mt-1 text-sm text-muted-foreground">{collection.description}</p>
         )}
-        <p className="mt-2 text-xs text-cyan-200/80">{collection.items.length} items</p>
+        <p className="mt-2 text-xs text-muted-foreground">{collection.items.length} items</p>
       </AnimatedSection>
 
       {collection.items.length === 0 ? (

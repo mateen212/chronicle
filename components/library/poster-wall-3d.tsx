@@ -89,7 +89,7 @@ export function PosterWall3D({ items }: { items: Item[] }) {
   }
 
   return (
-    <div className="h-[600px] w-full overflow-hidden rounded-2xl border border-white/10">
+    <div className="h-[600px] w-full overflow-hidden rounded-2xl border border-border">
       <Canvas camera={{ position: [0, -3, 12], fov: 55 }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={0.8} />

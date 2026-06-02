@@ -67,9 +67,9 @@ export default function DiscoverChatPage() {
 
   return (
     <div className="space-y-6">
-      <AnimatedSection className="rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/20 via-indigo-500/10 to-cyan-500/20 p-6 backdrop-blur-xl">
+      <AnimatedSection className="rounded-3xl p-6 bg-card border-border">
         <div className="flex items-center gap-3">
-          <Sparkles className="h-6 w-6 text-cyan-300" />
+          <Sparkles className="h-6 w-6 text-primary" />
           <div>
             <h1 className="text-2xl font-bold">AI Discovery Chat</h1>
             <p className="text-sm text-muted-foreground">Describe your mood and get personalized recommendations</p>
@@ -98,8 +98,8 @@ export default function DiscoverChatPage() {
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
                     msg.role === "user"
-                      ? "bg-violet-600/80 text-white"
-                      : "border border-white/10 bg-white/5"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border bg-popover/20 text-foreground"
                   }`}
                 >
                   {msg.content || (streaming && i === messages.length - 1 ? "▋" : "")}
@@ -110,19 +110,19 @@ export default function DiscoverChatPage() {
           <div ref={bottomRef} />
         </div>
 
-        <div className="mt-4 flex gap-2 border-t border-white/10 pt-4">
+        <div className="mt-4 flex gap-2 border-t border-border pt-4">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && void sendMessage()}
             placeholder="What are you in the mood for?"
-            className="flex-1 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-violet-500/50"
+            className="flex-1 rounded-xl border border-border bg-input px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
           />
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => void sendMessage()}
             disabled={!input.trim() || streaming}
-            className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium transition hover:bg-violet-700 disabled:opacity-50"
+            className="rounded-xl bg-primary px-4 py-2 text-sm font-medium transition hover:bg-primary/90 disabled:opacity-50"
           >
             <Send className="h-4 w-4" />
           </motion.button>

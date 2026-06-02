@@ -7,11 +7,11 @@ import { addDays, format, startOfWeek, eachWeekOfInterval, subDays } from "date-
 type HeatmapEntry = { date: string; count: number };
 
 const COLOR_SCALE = [
-  "bg-white/5",
-  "bg-violet-500/30",
-  "bg-violet-500/55",
-  "bg-violet-500/80",
-  "bg-violet-500",
+  "bg-popover/6",
+  "bg-primary/20",
+  "bg-primary/40",
+  "bg-primary/60",
+  "bg-primary",
 ];
 
 function getColor(count: number): string {

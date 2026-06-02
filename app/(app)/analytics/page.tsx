@@ -82,11 +82,11 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <AnimatedSection className="rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/20 via-indigo-500/10 to-cyan-500/20 p-6 backdrop-blur-xl">
-        <p className="text-xs uppercase tracking-widest text-cyan-200/80">Analytics</p>
-        <h1 className="mt-2 text-3xl font-bold">Your tracking overview</h1>
+      <AnimatedSection className="rounded-3xl p-6 bg-card border-border">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Analytics</p>
+        <h1 className="mt-2 text-3xl font-semibold text-foreground">Your tracking overview</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Longest streak: <span className="font-semibold text-cyan-300">{longestStreak} days</span>
+          Longest streak: <span className="font-semibold text-primary">{longestStreak} days</span>
         </p>
       </AnimatedSection>
 
