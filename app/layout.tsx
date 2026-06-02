@@ -66,7 +66,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${jakarta.variable} antialiased font-[family-name:var(--font-jakarta)]`}>
         <Providers>{children}</Providers>
         <PWAInstallPrompt />

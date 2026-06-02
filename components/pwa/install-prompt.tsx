@@ -40,8 +40,18 @@ export function PWAInstallPrompt() {
       setTimeout(() => setVisible(true), 3000)
     }
 
+    const installedHandler = () => {
+      setVisible(false)
+      setPrompt(null)
+      setDismissed(true)
+    }
+
     window.addEventListener("beforeinstallprompt", handler)
-    return () => window.removeEventListener("beforeinstallprompt", handler)
+    window.addEventListener("appinstalled", installedHandler)
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler)
+      window.removeEventListener("appinstalled", installedHandler)
+    }
   }, [dismissed])
 
   async function handleInstall() {

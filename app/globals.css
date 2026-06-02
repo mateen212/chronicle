@@ -138,6 +138,11 @@
   }
   html {
     @apply font-sans;
+  }
+  :root {
+    color-scheme: light;
+  }
+  .dark {
     color-scheme: dark;
   }
   /* Smooth scrolling */
@@ -185,4 +190,16 @@
 .card-hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Light-mode subtle card shadow and border override */
+:root .card-soft {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
+}
+.dark .card-soft {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 14px 40px rgba(2, 6, 23, 0.6);
 }
