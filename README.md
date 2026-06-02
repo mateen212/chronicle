@@ -39,7 +39,7 @@ With integrations to TMDB, MyAnimeList, Google Books, RAWG, and GitHub, Chronicl
 - **Google Books API** - Book discovery and metadata
 - **RAWG API** - Video game library and information
 - **GitHub API** - Track coding projects and contributions
-- **Anthropic Claude AI** - Advanced AI features and analysis
+- **Gemini AI** - Advanced AI features and analysis
 
 ### 🎨 Beautiful User Experience
 - **Cinematic Dashboards** - Visually stunning statistics and insights
@@ -86,7 +86,7 @@ With integrations to TMDB, MyAnimeList, Google Books, RAWG, and GitHub, Chronicl
 - **Clerk** - Authentication and user management
 
 ### AI & APIs
-- **Anthropic Claude AI** - Advanced LLM for intelligent features
+- **Gemini AI** - Advanced LLM for intelligent features
 - **TMDB API** - Movie and TV metadata
 - **MyAnimeList API** - Anime and manga data
 - **Google Books API** - Book information
@@ -172,8 +172,8 @@ RAWG_API_KEY=your_rawg_api_key
 GITHUB_TOKEN=your_github_token
 
 # AI
-ANTHROPIC_API_KEY=your_anthropic_api_key
-ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
+Gemini_API_KEY=your_Gemini_api_key
+Gemini_MODEL=gemini_model
 
 # Email
 RESEND_API_KEY=your_resend_api_key (optional)
@@ -190,7 +190,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 - **Google Books** - https://console.cloud.google.com/apis/library/books.googleapis.com
 - **RAWG** - https://rawg.io/apidocs
 - **GitHub** - https://github.com/settings/tokens
-- **Anthropic** - https://console.anthropic.com
+- **Gemini** - https://console.Gemini.com
 - **Resend** - https://resend.com (optional, for email features)
 
 ---
@@ -519,7 +519,7 @@ npm run build
 | Animations | Framer Motion |
 | 3D | Three.js + React Three Fiber + Drei |
 | Charts | Recharts |
-| AI | Anthropic Claude SDK |
+| AI | Gemini SDK |
 | Email | Resend |
 | Icons | Lucide React |
 
@@ -531,7 +531,7 @@ npm run build
 
 - Node.js 20+
 - PostgreSQL database (or Neon free tier)
-- Accounts for: Clerk, TMDB, RAWG, Anthropic (optional), Resend (optional)
+- Accounts for: Clerk, TMDB, RAWG, Gemini (optional), Resend (optional)
 
 ### Setup
 
@@ -563,7 +563,7 @@ TMDB_API_KEY="..."
 RAWG_API_KEY="..."
 
 # AI (optional)
-ANTHROPIC_API_KEY="sk-ant-..."
+Gemini_API_KEY="sk-ant-..."
 
 # Email (optional)
 RESEND_API_KEY="re_..."
