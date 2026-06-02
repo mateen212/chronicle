@@ -32,7 +32,7 @@ export class AppErrorBoundary extends React.Component<Props, State> {
           <p className="max-w-md text-sm text-muted-foreground">{this.state.message}</p>
           <button
             onClick={() => this.setState({ hasError: false, message: "" })}
-            className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
+            className="rounded-xl px-4 py-2 text-sm bg-popover/6 border border-border hover:bg-popover/8"
           >
             Try again
           </button>

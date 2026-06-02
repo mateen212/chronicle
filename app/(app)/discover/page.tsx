@@ -83,12 +83,10 @@ export default async function DiscoverPage() {
 
   return (
     <div className="space-y-6">
-      <AnimatedSection className="rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/20 via-indigo-500/10 to-cyan-500/20 p-6 backdrop-blur-xl">
-        <p className="text-xs uppercase tracking-widest text-cyan-200/80">Discover</p>
-        <h1 className="mt-2 text-3xl font-bold">Recommendations for you</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Based on your top-rated completed items.
-        </p>
+      <AnimatedSection className="rounded-3xl p-6 bg-card border-border">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Discover</p>
+        <h1 className="mt-2 text-3xl font-semibold text-foreground">Recommendations for you</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Based on your top-rated completed items.</p>
       </AnimatedSection>
 
       {grouped.length === 0 ? (
@@ -99,23 +97,23 @@ export default async function DiscoverPage() {
       ) : (
         grouped.map((group) => (
           <AnimatedSection key={group.sourceTitle} delay={0.05}>
-            <GlassCard>
-              <p className="mb-4 text-sm font-medium text-cyan-300">
-                Because you loved <span className="text-white">{group.sourceTitle}</span>…
+            <div className="rounded-2xl p-4 bg-card border-border">
+              <p className="mb-4 text-sm font-medium text-muted-foreground">
+                Because you loved <span className="font-semibold text-foreground">{group.sourceTitle}</span>…
               </p>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {group.recs.map((rec) => (
-                  <div
+                  <article
                     key={`${rec.externalId}-${rec.externalSource}`}
-                    className="flex gap-3 rounded-xl border border-white/10 bg-white/5 p-3"
+                    className="flex gap-3 rounded-lg p-3 bg-popover/6 border border-border items-center"
                   >
                     {rec.imageUrl && (
-                      <div className="relative h-16 w-11 shrink-0 overflow-hidden rounded-lg">
+                      <div className="relative h-16 w-11 shrink-0 overflow-hidden rounded-md bg-muted">
                         <Image src={rec.imageUrl} alt={rec.title} fill className="object-cover" sizes="44px" />
                       </div>
                     )}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{rec.title}</p>
+                      <p className="truncate text-sm font-medium text-foreground">{rec.title}</p>
                       {rec.description && (
                         <p className="line-clamp-2 text-xs text-muted-foreground mt-1">{rec.description}</p>
                       )}
@@ -132,20 +130,20 @@ export default async function DiscoverPage() {
                             externalSource: rec.externalSource,
                           });
                         }}
-                        className="mt-2"
+                        className="mt-3"
                       >
                         <button
                           type="submit"
-                          className="rounded-lg border border-violet-500/40 bg-violet-500/20 px-2 py-1 text-xs transition hover:bg-violet-500/30"
+                          className="rounded-md px-3 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 transition"
                         >
                           + Add to planned
                         </button>
                       </form>
                     </div>
-                  </div>
+                  </article>
                 ))}
               </div>
-            </GlassCard>
+            </div>
           </AnimatedSection>
         ))
       )}

@@ -55,7 +55,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               onClick={() => setSearchOpen(true)}
               className="flex items-center gap-2.5 text-sm text-muted-foreground rounded-xl px-3.5 py-2 transition-all hover:text-foreground group bg-input border-border"
             >
-              <Search size={14} className="group-hover:text-[#F5C518] transition-colors" />
+              <Search size={14} className="group-hover:text-primary transition-colors" />
               <span className="hidden sm:inline">Search &amp; add</span>
               <kbd className="hidden sm:inline text-xs text-muted-foreground/50 font-mono">⌘K</kbd>
             </button>

@@ -11,7 +11,7 @@ import { ItemCard } from "@/components/items/item-card";
 
 const PosterWall3D = dynamic(
   () => import("@/components/library/poster-wall-3d").then((m) => m.PosterWall3D),
-  { ssr: false, loading: () => <div className="h-[600px] w-full animate-pulse rounded-2xl bg-white/5" /> },
+  { ssr: false, loading: () => <div className="h-[600px] w-full animate-pulse rounded-2xl bg-popover/6" /> },
 );
 
 export default function LibraryPage() {
@@ -24,22 +24,22 @@ export default function LibraryPage() {
 
   return (
     <div className="space-y-6">
-      <AnimatedSection className="flex items-start justify-between rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/20 via-indigo-500/10 to-cyan-500/20 p-6 backdrop-blur-xl">
+      <AnimatedSection className="flex items-start justify-between rounded-3xl p-6 bg-card border-border">
         <div>
-          <p className="text-xs uppercase tracking-widest text-cyan-200/80">Library</p>
-          <h1 className="mt-2 text-3xl font-bold">Your complete library</h1>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Library</p>
+          <h1 className="mt-2 text-3xl font-semibold text-foreground">Your complete library</h1>
           <p className="mt-1 text-sm text-muted-foreground">{items.length} items tracked</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setView("grid")}
-            className={`rounded-xl border p-2 transition ${view === "grid" ? "border-violet-400/50 bg-violet-500/20 text-violet-300" : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10"}`}
+            className={`rounded-xl p-2 transition ${view === "grid" ? "bg-primary/10 border border-primary/20 text-primary" : "bg-popover/6 text-muted-foreground hover:bg-popover/8 border border-border"}`}
           >
             <LayoutGrid className="h-4 w-4" />
           </button>
           <button
             onClick={() => setView("3d")}
-            className={`rounded-xl border p-2 transition ${view === "3d" ? "border-cyan-400/50 bg-cyan-500/20 text-cyan-300" : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10"}`}
+            className={`rounded-xl p-2 transition ${view === "3d" ? "bg-primary/10 border border-primary/20 text-primary" : "bg-popover/6 text-muted-foreground hover:bg-popover/8 border border-border"}`}
           >
             <Box className="h-4 w-4" />
           </button>

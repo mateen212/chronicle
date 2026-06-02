@@ -119,7 +119,7 @@ export function ItemDetailClient({ item }: { item: any }) {
                 className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors cursor-pointer bg-transparent focus:outline-none ${STATUS_STYLES[item.status] ?? STATUS_STYLES.planned}`}
               >
                 {ITEM_STATUSES.map((s) => (
-                  <option key={s} value={s} className="bg-[#141A22]">{STATUS_LABELS[s]}</option>
+                  <option key={s} value={s} className="bg-popover/6">{STATUS_LABELS[s]}</option>
                 ))}
               </select>
             </div>
@@ -135,11 +135,11 @@ export function ItemDetailClient({ item }: { item: any }) {
                 >
                   <Star
                     size={16}
-                    className={`transition-colors ${n <= (hoverRating || rating) ? "fill-[#F5C518] text-[#F5C518]" : "text-muted-foreground/30"}`}
+                    className={`transition-colors ${n <= (hoverRating || rating) ? "fill-primary text-primary" : "text-muted-foreground/30"}`}
                   />
                 </button>
               ))}
-              {rating > 0 && <span className="text-sm font-semibold text-[#F5C518] ml-1">{rating}/10</span>}
+              {rating > 0 && <span className="text-sm font-semibold text-primary ml-1">{rating}/10</span>}
             </div>
           </div>
         </div>
@@ -189,8 +189,8 @@ export function ItemDetailClient({ item }: { item: any }) {
               <>
                 <div className="h-2 rounded-full overflow-hidden mb-2 bg-popover/20">
                   <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{ width: `${pct}%`, background: "#F5C518" }}
+                    className="h-full rounded-full transition-all duration-500 bg-primary"
+                    style={{ width: `${pct}%` }}
                   />
                 </div>
                 <div className="flex justify-between text-xs text-muted-foreground">

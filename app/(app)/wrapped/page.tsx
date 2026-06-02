@@ -36,7 +36,7 @@ export default function WrappedPage() {
     <div className="space-y-6">
       <AnimatedSection className="rounded-3xl border border-border bg-card p-6 backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          <Sparkles className="h-6 w-6 text-yellow-400" />
+          <Sparkles className="h-6 w-6 text-primary" />
           <div>
             <h1 className="text-3xl font-bold">{year} Wrapped</h1>
             <p className="text-sm text-muted-foreground">Your year in review, powered by AI</p>
@@ -71,27 +71,22 @@ export default function WrappedPage() {
             <div className="absolute inset-0" />
             <div className="relative z-10 flex h-full flex-col">
               <div className="flex items-center gap-2 mb-6">
-                <Sparkles className="h-5 w-5 text-yellow-400" />
-                <span className="font-semibold text-yellow-400">Chronicle Wrapped {year}</span>
+                <Sparkles className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-primary">Chronicle Wrapped {year}</span>
               </div>
               <div className="flex-1 overflow-hidden">
-                <p className="text-sm leading-relaxed text-white/90 whitespace-pre-wrap">
+                <p className="text-sm leading-relaxed text-foreground whitespace-pre-wrap">
                   {narrative}
                   {loading && <span className="animate-pulse">▋</span>}
                 </p>
               </div>
-              <p className="mt-4 text-xs text-white/30">chronicle.app</p>
+              <p className="mt-4 text-xs text-muted-foreground">chronicle.app</p>
             </div>
           </div>
 
           {!loading && narrative && (
             <div className="mt-4 flex justify-center gap-3">
-              <button
-                onClick={() => void generate()}
-                className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-              >
-                Regenerate
-              </button>
+              <button onClick={() => void generate()} className="rounded-xl px-4 py-2 text-sm bg-popover/6 border border-border hover:bg-popover/8">Regenerate</button>
             </div>
           )}
         </motion.div>

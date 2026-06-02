@@ -44,37 +44,39 @@ export default async function DashboardPage() {
   return (
     <div className="p-6 space-y-8 max-w-7xl mx-auto">
 
-      {/* Hero stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      {/* Hero stats - editorial cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {[
-          { label: "Tracked", value: stats.total, icon: TrendingUp, color: "#F5C518" },
-          { label: "Active", value: stats.active, icon: Clock, color: "#3b82f6" },
-          { label: "Completed", value: stats.completed, icon: CheckCircle, color: "#10b981" },
-          { label: "Movies", value: stats.movies, icon: Film, color: "#ec4899" },
-          { label: "Shows", value: stats.shows, icon: Tv, color: "#8b5cf6" },
-          { label: "Books", value: stats.books, icon: BookOpen, color: "#f59e0b" },
+          { label: "Tracked", value: stats.total, icon: TrendingUp },
+          { label: "Active", value: stats.active, icon: Clock },
+          { label: "Completed", value: stats.completed, icon: CheckCircle },
+          { label: "Movies", value: stats.movies, icon: Film },
+          { label: "Shows", value: stats.shows, icon: Tv },
+          { label: "Books", value: stats.books, icon: BookOpen },
         ].map((s) => (
-          <div
-            key={s.label}
-            className="rounded-2xl p-4 flex flex-col gap-2"
-            style={{ background: "oklch(0.14 0.018 255 / 90%)", border: "1px solid rgba(255,255,255,0.07)" }}
-          >
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-muted-foreground font-medium">{s.label}</p>
-              <s.icon size={14} style={{ color: s.color }} />
+          <div key={s.label} className="rounded-2xl p-4 bg-card border-border shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <p className="text-xs text-muted-foreground font-medium tracking-wide">{s.label}</p>
+                <p className="mt-2 text-3xl font-bold text-foreground">{s.value}</p>
+              </div>
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-popover/6">
+                  <s.icon size={20} className="text-primary" />
+                </div>
+              </div>
             </div>
-            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
           </div>
         ))}
       </div>
 
       {isEmpty && (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-[#F5C518]/10 border border-[#F5C518]/20 flex items-center justify-center mb-4">
-            <BookOpen size={24} className="text-[#F5C518]" />
+          <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+            <BookOpen size={24} className="text-primary" />
           </div>
-          <h2 className="text-xl font-bold mb-2">Your library is empty</h2>
-          <p className="text-sm text-muted-foreground max-w-xs">
+          <h2 className="text-xl font-semibold mb-2 text-foreground">Your library is empty</h2>
+          <p className="text-sm text-muted-foreground max-w-lg">
             Use the Search &amp; add button in the header to start tracking movies, shows, books, and more.
           </p>
         </div>

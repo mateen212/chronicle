@@ -6,18 +6,15 @@ import { Plus, Star, Tv, Film, BookOpen, Gamepad2, Code } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  planned:   { bg: "bg-slate-800/80",   text: "text-slate-300",   label: "Want to Watch" },
-  watching:  { bg: "bg-blue-900/80",    text: "text-blue-300",    label: "Watching" },
-  reading:   { bg: "bg-purple-900/80",  text: "text-purple-300",  label: "Reading" },
-  completed: { bg: "bg-emerald-900/80", text: "text-emerald-300", label: "Completed" },
-  paused:    { bg: "bg-yellow-900/80",  text: "text-yellow-300",  label: "On Hold" },
-  dropped:   { bg: "bg-red-900/80",     text: "text-red-300",     label: "Dropped" },
+  planned:   { bg: "bg-popover/6",   text: "text-muted-foreground",   label: "Want to Watch" },
+  watching:  { bg: "bg-popover/6",   text: "text-muted-foreground",   label: "Watching" },
+  reading:   { bg: "bg-popover/6",   text: "text-muted-foreground",   label: "Reading" },
+  completed: { bg: "bg-popover/6",   text: "text-muted-foreground",   label: "Completed" },
+  paused:    { bg: "bg-popover/6",   text: "text-muted-foreground",   label: "On Hold" },
+  dropped:   { bg: "bg-popover/6",   text: "text-muted-foreground",   label: "Dropped" },
 }
 
-const TYPE_ACCENT: Record<string, string> = {
-  movie: "#3b82f6", series: "#F5C518", anime: "#ec4899", manga: "#f59e0b",
-  book: "#10b981", project: "#6366f1", course: "#14b8a6", game: "#f97316",
-}
+const TYPE_ACCENT: Record<string, string> = {}
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
   movie: <Film size={20} />, series: <Tv size={20} />, anime: <Tv size={20} />,
@@ -79,11 +76,8 @@ export function ItemCard({ item }: { item: Item }) {
               sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 200px"
             />
           ) : (
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ background: `${accent}18` }}
-            >
-              <span style={{ color: accent }}>{TYPE_ICON[item.type]}</span>
+            <div className="absolute inset-0 flex items-center justify-center bg-popover/6">
+              <span className="text-primary">{TYPE_ICON[item.type]}</span>
             </div>
           )}
 
@@ -106,10 +100,7 @@ export function ItemCard({ item }: { item: Item }) {
           {item.progressTotal && progress > 0 && (
             <div className="absolute bottom-0 left-0 right-0">
               <div className="h-1 w-full bg-popover/40">
-                <div
-                  className="h-full transition-all duration-500"
-                  style={{ width: `${progressPct}%`, background: accent }}
-                />
+                <div className="h-full transition-all duration-500 bg-primary" style={{ width: `${progressPct}%` }} />
               </div>
             </div>
           )}
@@ -119,7 +110,7 @@ export function ItemCard({ item }: { item: Item }) {
       {/* Info */}
       <div className="p-3">
         <Link href={`/items/${item.id}`}>
-          <p className="text-sm font-semibold line-clamp-1 hover:text-[#F5C518] transition-colors">{item.title}</p>
+          <p className="text-sm font-semibold line-clamp-1 hover:text-primary transition-colors">{item.title}</p>
         </Link>
 
         <div className="flex items-center justify-between mt-1.5 gap-2">
@@ -127,7 +118,7 @@ export function ItemCard({ item }: { item: Item }) {
             {item.progressTotal ? (
               <p className="text-xs text-muted-foreground">
                 {progress}/{item.progressTotal} {unit}
-                {progressPct > 0 && <span className="ml-1 text-[#F5C518]/70">{progressPct}%</span>}
+                {progressPct > 0 && <span className="ml-1 text-primary/70">{progressPct}%</span>}
               </p>
             ) : isTV && item.currentSeason ? (
               <p className="text-xs text-muted-foreground">
@@ -143,8 +134,7 @@ export function ItemCard({ item }: { item: Item }) {
             <button
               onClick={increment}
               disabled={loading}
-              className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-40"
-              style={{ background: accent + "22", border: `1px solid ${accent}44`, color: accent }}
+              className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-40 bg-primary/10 border border-primary/30 text-primary"
               title={`Log next ${unit}`}
             >
               <Plus size={14} />

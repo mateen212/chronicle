@@ -77,18 +77,12 @@ export function PWAInstallPrompt() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 80, scale: 0.95 }}
           transition={{ type: "spring", damping: 20, stiffness: 260 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm"
-          style={{
-            background: "#141A22",
-            border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: "1rem",
-            boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
-          }}
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm rounded-xl bg-card border-border shadow-2xl"
         >
           <div className="p-4">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#F5C518] flex items-center justify-center flex-shrink-0">
-                <span className="text-black font-bold text-lg">C</span>
+              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
+                <span className="text-primary-foreground font-bold text-lg">C</span>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground">Install Chronicle</p>
@@ -98,7 +92,7 @@ export function PWAInstallPrompt() {
               </div>
               <button
                 onClick={handleDismiss}
-                className="flex-shrink-0 p-1 rounded-lg hover:bg-white/8 text-muted-foreground transition-colors"
+                className="flex-shrink-0 p-1 rounded-lg hover:bg-popover/8 text-muted-foreground transition-colors"
               >
                 <X size={16} />
               </button>
@@ -106,13 +100,13 @@ export function PWAInstallPrompt() {
             <div className="flex gap-2 mt-3">
               <button
                 onClick={handleDismiss}
-                className="flex-1 py-2 px-3 rounded-xl text-xs text-muted-foreground border border-white/10 hover:bg-white/5 transition-colors"
+                className="flex-1 py-2 px-3 rounded-xl text-xs text-muted-foreground border border-border bg-popover/6 hover:bg-popover/8 transition-colors"
               >
                 Not now
               </button>
               <button
                 onClick={handleInstall}
-                className="flex-1 py-2 px-3 rounded-xl text-xs font-semibold bg-[#F5C518] text-black hover:bg-[#F5C518]/90 transition-colors flex items-center justify-center gap-1.5"
+                className="flex-1 py-2 px-3 rounded-xl text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center gap-1.5"
               >
                 <Download size={12} /> Install
               </button>

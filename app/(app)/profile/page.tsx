@@ -33,23 +33,21 @@ export default async function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <AnimatedSection className="rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/20 via-indigo-500/10 to-cyan-500/20 p-6 backdrop-blur-xl">
+      <AnimatedSection className="rounded-3xl p-6 bg-card border-border">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white/20">
+            <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-border bg-popover/6">
               {clerkUser?.imageUrl ? (
                 <Image src={clerkUser.imageUrl} alt="Avatar" fill className="object-cover" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-violet-500/50 to-cyan-500/50 text-2xl font-bold">
+                <div className="flex h-full w-full items-center justify-center bg-popover/8 text-2xl font-bold text-foreground">
                   {clerkUser?.firstName?.[0] ?? "?"}
                 </div>
               )}
             </div>
             <div>
-              <h1 className="text-2xl font-bold">{clerkUser?.fullName ?? "Profile"}</h1>
-              <p className="text-sm text-muted-foreground">
-                {clerkUser?.primaryEmailAddress?.emailAddress}
-              </p>
+              <h1 className="text-2xl font-semibold text-foreground">{clerkUser?.fullName ?? "Profile"}</h1>
+              <p className="text-sm text-muted-foreground">{clerkUser?.primaryEmailAddress?.emailAddress}</p>
             </div>
           </div>
           <UserButton showName />
@@ -59,19 +57,19 @@ export default async function ProfilePage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <GlassCard>
           <p className="text-sm text-muted-foreground">Total items</p>
-          <p className="text-3xl font-bold">{totalItems}</p>
+          <p className="text-3xl font-semibold text-foreground">{totalItems}</p>
         </GlassCard>
         <GlassCard>
           <p className="text-sm text-muted-foreground">Completed</p>
-          <p className="text-3xl font-bold">{completedItems}</p>
+          <p className="text-3xl font-semibold text-foreground">{completedItems}</p>
         </GlassCard>
         <GlassCard>
           <p className="text-sm text-muted-foreground">Completion rate</p>
-          <p className="text-3xl font-bold">{completionRate}%</p>
+          <p className="text-3xl font-semibold text-foreground">{completionRate}%</p>
         </GlassCard>
         <GlassCard>
           <p className="text-sm text-muted-foreground">Avg rating</p>
-          <p className="text-3xl font-bold">{avgRating ?? "—"}</p>
+          <p className="text-3xl font-semibold text-foreground">{avgRating ?? "—"}</p>
         </GlassCard>
       </div>
 

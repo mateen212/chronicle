@@ -32,7 +32,7 @@ export function ThemeToggle() {
       }}
     >
       <span className="flex items-center gap-2">
-        {isDark ? <Sun className="h-4 w-4 text-[#F5C518]" /> : <Moon className="h-4 w-4 text-[#F5C518]" />}
+        {isDark ? <Sun className="h-4 w-4 text-primary" /> : <Moon className="h-4 w-4 text-primary" />}
         <span className="text-sm font-medium">{isDark ? "🌙 Dark Mode" : "☀️ Light Mode"}</span>
       </span>
     </motion.button>

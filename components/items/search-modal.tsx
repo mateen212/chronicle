@@ -57,12 +57,12 @@ function StatusOption({ label, description, active, onClick }: {
     <button
       onClick={onClick}
       className={`w-full text-left px-4 py-3 rounded-xl border transition-all duration-150 ${
-        active ? "border-[#F5C518] bg-[#F5C518]/10 text-foreground" : "border-border bg-card/40 hover:border-border/80 hover:bg-card/60 text-foreground/80"
+        active ? "border-primary bg-primary/10 text-foreground" : "border-border bg-card/40 hover:border-border/80 hover:bg-card/60 text-foreground/80"
       }`}
     >
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">{label}</span>
-        {active && <Check size={14} className="text-[#F5C518] flex-shrink-0" />}
+        {active && <Check size={14} className="text-primary flex-shrink-0" />}
       </div>
       {description && <p className="text-xs text-muted-foreground mt-0.5">{description}</p>}
     </button>
@@ -75,7 +75,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
     <div className="flex gap-1">
       {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
         <button key={n} onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(0)} onClick={() => onChange(n === value ? 0 : n)} className="transition-transform hover:scale-110">
-          <Star size={18} className={`transition-colors ${n <= (hover || value) ? "fill-[#F5C518] text-[#F5C518]" : "text-muted-foreground/40"}`} />
+          <Star size={18} className={`transition-colors ${n <= (hover || value) ? "fill-primary text-primary" : "text-muted-foreground/40"}`} />
         </button>
       ))}
     </div>
@@ -362,9 +362,9 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
                         {tvDetails ? (
                           <select value={selSeason} onChange={(e) => { setSelSeason(Number(e.target.value)); setSelEpisode(1) }}
                             className="w-full text-sm bg-input border border-border rounded-xl px-3 py-2.5 focus:outline-none focus:border-primary">
-                            {tvDetails.seasons.filter(s => s.seasonNumber > 0).map((s) => (
-                              <option key={s.seasonNumber} value={s.seasonNumber} className="bg-[#141A22]">Season {s.seasonNumber} ({s.episodeCount} ep)</option>
-                            ))}
+                              {tvDetails.seasons.filter(s => s.seasonNumber > 0).map((s) => (
+                                <option key={s.seasonNumber} value={s.seasonNumber} className="bg-popover/6">Season {s.seasonNumber} ({s.episodeCount} ep)</option>
+                              ))}
                           </select>
                         ) : (
                           <input type="number" min={1} value={selSeason} onChange={(e) => setSelSeason(Math.max(1, Number(e.target.value)))}

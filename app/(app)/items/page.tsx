@@ -68,10 +68,7 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
   return (
     <div className="p-4 sm:p-6 space-y-4 max-w-7xl mx-auto">
       {/* Filter bar */}
-      <div
-        className="rounded-2xl p-4 space-y-3"
-        style={{ background: "oklch(0.14 0.018 255 / 90%)", border: "1px solid rgba(255,255,255,0.07)" }}
-      >
+         <div className="rounded-2xl p-4 space-y-3 bg-card border-border">
         <form className="grid gap-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           <div className="relative">
             <Filter size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -87,7 +84,7 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
               <select name="type" defaultValue={filters.type ?? ""} className="text-sm bg-input border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary">
             <option value="">All types</option>
             {ITEM_TYPES.map((t) => (
-              <option key={t} value={t} className="bg-[#141A22] capitalize">{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+              <option key={t} value={t} className="bg-popover/6 capitalize">{t.charAt(0).toUpperCase() + t.slice(1)}</option>
             ))}
           </select>
 
@@ -95,20 +92,20 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
               <select name="status" defaultValue={filters.status ?? ""} className="text-sm bg-input border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary">
             <option value="">All statuses</option>
             {STATUS_OPTIONS.map((s) => (
-              <option key={s.value} value={s.value} className="bg-[#141A22]">{s.label}</option>
+              <option key={s.value} value={s.value} className="bg-popover/6">{s.label}</option>
             ))}
           </select>
 
           {/* Sort */}
               <select name="sort" defaultValue={filters.sort ?? "recent"} className="text-sm bg-input border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary">
-            <option value="recent" className="bg-[#141A22]">Recently Updated</option>
-            <option value="added" className="bg-[#141A22]">Recently Added</option>
-            <option value="alpha" className="bg-[#141A22]">Alphabetical</option>
-            <option value="rating" className="bg-[#141A22]">Highest Rated</option>
-            <option value="progress" className="bg-[#141A22]">Most Progress</option>
+            <option value="recent" className="bg-popover/6">Recently Updated</option>
+            <option value="added" className="bg-popover/6">Recently Added</option>
+            <option value="alpha" className="bg-popover/6">Alphabetical</option>
+            <option value="rating" className="bg-popover/6">Highest Rated</option>
+            <option value="progress" className="bg-popover/6">Most Progress</option>
           </select>
 
-          <button type="submit" className="py-2 px-4 rounded-xl text-sm font-medium bg-[#F5C518] text-black hover:bg-[#F5C518]/90 transition-colors">
+          <button type="submit" className="py-2 px-4 rounded-xl text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
             Apply
           </button>
         </form>
@@ -124,7 +121,7 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
                   active
                         ? "bg-primary/15 text-primary border border-primary/30"
-                    : "bg-white/5 text-muted-foreground hover:bg-white/10 border border-white/8"
+                    : "bg-popover/6 text-muted-foreground hover:bg-popover/8 border border-border"
                 }`}
               >
                 {TYPE_ICONS[t]}
