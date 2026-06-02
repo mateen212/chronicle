@@ -12,10 +12,16 @@ interface BeforeInstallPromptEvent extends Event {
 export function PWAInstallPrompt() {
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [visible, setVisible] = useState(false)
-  const [dismissed, setDismissed] = useState(false)
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    try {
+      return typeof window !== "undefined" && !!window.localStorage.getItem("pwa-install-dismissed")
+    } catch {
+      return false
+    }
+  })
 
   useEffect(() => {
-    // Don't show if already installed or previously dismissed in this session
+    // Don't show if already installed or previously dismissed
     if (dismissed) return
     if (typeof window === "undefined") return
 
@@ -26,16 +32,12 @@ export function PWAInstallPrompt() {
 
     if (isStandalone) return
 
-    // Register service worker
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js", { scope: "/" })
-        .catch(() => {}) // silently ignore errors in dev
-    }
+    // Service worker registration is handled globally in Providers
 
     const handler = (e: Event) => {
       e.preventDefault()
       setPrompt(e as BeforeInstallPromptEvent)
+      try { (window as any).__chronicle_beforeinstallprompt = e } catch {}
       // Show the custom prompt after a short delay
       setTimeout(() => setVisible(true), 3000)
     }
@@ -44,6 +46,8 @@ export function PWAInstallPrompt() {
       setVisible(false)
       setPrompt(null)
       setDismissed(true)
+      try { window.localStorage.setItem("pwa-install-dismissed", "1") } catch {}
+      try { delete (window as any).__chronicle_beforeinstallprompt } catch {}
     }
 
     window.addEventListener("beforeinstallprompt", handler)
@@ -67,6 +71,7 @@ export function PWAInstallPrompt() {
   function handleDismiss() {
     setVisible(false)
     setDismissed(true)
+    try { window.localStorage.setItem("pwa-install-dismissed", "1") } catch {}
   }
 
   return (

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { GradientBackground } from "@/components/common/gradient-background";
 import { GlassCard } from "@/components/common/glass-card";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { PWAInstallButton } from "@/components/pwa/install-button";
 
 import { ParallaxHeroClient } from "@/components/landing/parallax-hero-client";
 const ParallaxHero = ParallaxHeroClient;
@@ -44,7 +45,7 @@ export default async function Home() {
     <main className="relative min-h-screen overflow-hidden">
 
       {/* Top navbar */}
-      <header className="z-20 w-full border-b border-border bg-card/80 backdrop-blur-sm">
+      <header className="z-20 w-full border-b border-border bg-card/80 backdrop-blur-sm safe-area-top safe-area-horizontal">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <Link href="/" className="inline-flex items-center gap-3">
             <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center text-primary font-semibold">C</div>
@@ -53,7 +54,11 @@ export default async function Home() {
 
           <div className="ml-auto flex items-center gap-3">
             <ThemeToggle />
-            {!userId ? (
+            <div className="lg:hidden">
+              {/* Mobile-only PWA install button */}
+              <PWAInstallButton />
+            </div>
+            {/* {!userId ? (
               <>
                 <SignInButton>
                   <button className="rounded-md px-3 py-1.5 text-sm bg-popover/6 hover:bg-popover/8">Sign in</button>
@@ -69,7 +74,7 @@ export default async function Home() {
                   <button className="rounded-md px-3 py-1.5 text-sm bg-popover/6 hover:bg-popover/8">Sign out</button>
                 </SignOutButton>
               </>
-            )}
+            )} */}
           </div>
         </div>
       </header>

@@ -210,3 +210,12 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 14px 40px rgba(2, 6, 23, 0.6);
 }
+
+/* Safe-area helpers for PWA/mobile */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-area-horizontal {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}

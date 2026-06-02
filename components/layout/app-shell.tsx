@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { Sidebar } from "./sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { PWAInstallButton } from "@/components/pwa/install-button"
 import { UserButton } from "@clerk/nextjs"
 import { Menu, Search } from "lucide-react"
 import { SearchModal } from "@/components/items/search-modal"
@@ -42,7 +43,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-14 flex items-center justify-between px-4 flex-shrink-0 border-b border-border bg-popover/80 backdrop-blur-xl">
+        <header className="h-14 flex items-center justify-between px-4 flex-shrink-0 border-b border-border bg-popover/80 backdrop-blur-xl safe-area-top safe-area-horizontal">
           <button
             onClick={() => setOpen(true)}
             className="lg:hidden p-2 rounded-xl hover:bg-white/8 text-muted-foreground transition-colors"
@@ -59,6 +60,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <span className="hidden sm:inline">Search &amp; add</span>
               <kbd className="hidden sm:inline text-xs text-muted-foreground/50 font-mono">⌘K</kbd>
             </button>
+            <div className="lg:hidden">
+              <PWAInstallButton />
+            </div>
             <ThemeToggle />
             <UserButton
               appearance={{
