@@ -45,7 +45,6 @@ export function ItemCard({ item }: { item: Item }) {
   const progressPct = item.progressTotal ? Math.min(100, Math.round((progress / item.progressTotal) * 100)) : 0
   const isActive = item.status === "watching" || item.status === "reading"
   const isTV = item.type === "series" || item.type === "anime"
-  const accent = TYPE_ACCENT[item.type] ?? "#F5C518"
   const statusStyle = STATUS_STYLES[item.status] ?? STATUS_STYLES.planned
   const unit = item.type === "book" || item.type === "manga" ? "ch"
     : item.type === "game" ? "hr"
