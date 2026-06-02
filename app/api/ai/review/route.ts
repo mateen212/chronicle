@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
-import { anthropic, AI_MODEL } from "@/lib/ai/client";
+import { geminiApiKey, streamGeminiText } from "@/lib/ai/client";
 
 const bodySchema = z.object({
   title: z.string(),
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (!anthropic) {
+  if (!geminiApiKey) {
     return NextResponse.json({ error: "AI features not configured" }, { status: 503 });
   }
 
@@ -23,33 +23,21 @@ export async function POST(req: NextRequest) {
 
   const { title, type, rating, notes } = body.data;
 
-  const stream = await anthropic.messages.create({
-    model: AI_MODEL,
-    max_tokens: 300,
-    stream: true,
-    system:
+  const readable = streamGeminiText({
+    maxOutputTokens: 300,
+    systemInstruction:
       "You are a thoughtful critic. Write a personal 150-word review in first person. Be honest, reflective, and specific.",
-    messages: [
+    contents: [
       {
         role: "user",
-        content: `Write a review for: "${title}" (${type}). My rating: ${rating ?? "unrated"}/10. My notes: ${notes ?? "none"}.`,
+        parts: [
+          {
+            text: `Write a review for: "${title}" (${type}). My rating: ${rating ?? "unrated"}/10. My notes: ${notes ?? "none"}.`,
+          },
+        ],
       },
     ],
   });
 
-  const encoder = new TextEncoder();
-  const readable = new ReadableStream({
-    async start(controller) {
-      for await (const event of stream) {
-        if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-          controller.enqueue(encoder.encode(event.delta.text));
-        }
-      }
-      controller.close();
-    },
-  });
-
-  return new NextResponse(readable, {
-    headers: { "Content-Type": "text/plain; charset=utf-8" },
-  });
+  return new NextResponse(readable, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
 }

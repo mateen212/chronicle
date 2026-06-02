@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
-import { anthropic, AI_MODEL } from "@/lib/ai/client";
+import { geminiApiKey, generateGeminiText } from "@/lib/ai/client";
 import { prisma } from "@/lib/prisma/client";
 import { requireDbUser } from "@/lib/auth";
 
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (!anthropic) return NextResponse.json({ tags: [] });
+  if (!geminiApiKey) return NextResponse.json({ tags: [] });
 
   const body = bodySchema.safeParse(await req.json());
   if (!body.success) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
@@ -24,19 +24,21 @@ export async function POST(req: NextRequest) {
   if (!item) return NextResponse.json({ error: "Item not found" }, { status: 404 });
 
   try {
-    const message = await anthropic.messages.create({
-      model: AI_MODEL,
-      max_tokens: 100,
-      messages: [
+    const text = await generateGeminiText({
+      maxOutputTokens: 100,
+      contents: [
         {
           role: "user",
-          content: `Return a JSON array of 3-5 mood/theme tags for: "${item.title}" (${item.type}). Description: ${item.description ?? "none"}. Return ONLY the JSON array, e.g. ["action","dark","thriller"]`,
+          parts: [
+            {
+              text: `Return a JSON array of 3-5 mood/theme tags for: "${item.title}" (${item.type}). Description: ${item.description ?? "none"}. Return ONLY the JSON array, e.g. ["action","dark","thriller"]`,
+            },
+          ],
         },
       ],
     });
 
-    const text = message.content[0]?.type === "text" ? message.content[0].text : "[]";
-    const match = text.match(/[\s\S]*\[([\s\S]*)\]/);
+    const match = text.match(/\[[\s\S]*\]/);
     const tags: string[] = match ? (JSON.parse(match[0]) as string[]) : [];
 
     for (const tagName of tags) {

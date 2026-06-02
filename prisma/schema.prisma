@@ -61,6 +61,8 @@ model Item {
   status         ItemStatus      @default(planned)
   progressCurrent Int            @default(0)
   progressTotal  Int?
+  currentSeason  Int?
+  currentEpisode Int?
   rating         Int?
   externalId     String?
   externalSource String?

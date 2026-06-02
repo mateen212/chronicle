@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { anthropic, AI_MODEL } from "@/lib/ai/client";
+import { geminiApiKey, streamGeminiText } from "@/lib/ai/client";
 import { prisma } from "@/lib/prisma/client";
 import { requireDbUser } from "@/lib/auth";
 
@@ -8,7 +8,7 @@ export async function POST() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (!anthropic) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
+  if (!geminiApiKey) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
 
   const dbUser = await requireDbUser();
   const thisYear = new Date().getFullYear();
@@ -38,30 +38,19 @@ export async function POST() {
     ),
   };
 
-  const stream = await anthropic.messages.create({
-    model: AI_MODEL,
-    max_tokens: 600,
-    stream: true,
-    system:
-      "You create engaging, personal year-in-review narratives for a media tracking app. Be warm, specific, and fun.",
-    messages: [
+  const readable = streamGeminiText({
+    maxOutputTokens: 600,
+    systemInstruction: "You create engaging, personal year-in-review narratives for a media tracking app. Be warm, specific, and fun.",
+    contents: [
       {
         role: "user",
-        content: `Generate a 300-word year-in-review narrative for ${thisYear}. Data: ${JSON.stringify(summary)}`,
+        parts: [
+          {
+            text: `Generate a 300-word year-in-review narrative for ${thisYear}. Data: ${JSON.stringify(summary)}`,
+          },
+        ],
       },
     ],
-  });
-
-  const encoder = new TextEncoder();
-  const readable = new ReadableStream({
-    async start(controller) {
-      for await (const event of stream) {
-        if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-          controller.enqueue(encoder.encode(event.delta.text));
-        }
-      }
-      controller.close();
-    },
   });
 
   return new NextResponse(readable, { headers: { "Content-Type": "text/plain; charset=utf-8" } });

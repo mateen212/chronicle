@@ -17,11 +17,23 @@ export async function createItem(data: {
   metadata?: Record<string, unknown>
   progressTotal?: number
   progressCurrent?: number
+  currentSeason?: number
+  currentEpisode?: number
   status?: string
   rating?: number
+  notes?: string
 }) {
   const user = await requireDbUser()
   const id = crypto.randomUUID()
+
+  // Fix: when marking a TV show / anime as completed, progressCurrent must equal progressTotal
+  const isCompleted = data.status === "completed"
+  const isTvType = data.type === "series" || data.type === "anime"
+  const resolvedProgressCurrent =
+    isCompleted && isTvType && data.progressTotal !== undefined
+      ? data.progressTotal
+      : data.progressCurrent
+
   const item = await prisma.item.create({
     data: {
       id,
@@ -34,8 +46,11 @@ export async function createItem(data: {
       externalId: data.externalId,
       externalSource: data.externalSource,
       progressTotal: data.progressTotal,
-      ...(data.progressCurrent !== undefined ? { progressCurrent: data.progressCurrent } : {}),
+      ...(resolvedProgressCurrent !== undefined ? { progressCurrent: resolvedProgressCurrent } : {}),
+      ...(data.currentSeason !== undefined ? { currentSeason: data.currentSeason } : {}),
+      ...(data.currentEpisode !== undefined ? { currentEpisode: data.currentEpisode } : {}),
       rating: data.rating,
+      notes: data.notes,
       ...(data.status ? { status: data.status as Parameters<typeof prisma.item.create>[0]["data"]["status"] } : {}),
       ...(data.status === "watching" || data.status === "reading" ? { startedAt: new Date() } : {}),
       ...(data.status === "completed" ? { completedAt: new Date() } : {}),
@@ -55,7 +70,7 @@ export async function createItem(data: {
   return item
 }
 
-export async function updateItemProgress(itemId: string, current: number, total?: number) {
+export async function updateItemProgress(itemId: string, current: number, total?: number, season?: number, episode?: number) {
   const user = await requireDbUser()
   const item = await prisma.item.findFirst({ where: { id: itemId, userId: user.id } })
   if (!item) throw new Error("Item not found")
@@ -65,6 +80,8 @@ export async function updateItemProgress(itemId: string, current: number, total?
     data: {
       progressCurrent: current,
       ...(total !== undefined ? { progressTotal: total } : {}),
+      ...(season !== undefined ? { currentSeason: season } : {}),
+      ...(episode !== undefined ? { currentEpisode: episode } : {}),
       ...(completed ? { status: "completed", completedAt: new Date() } : {}),
     },
   })

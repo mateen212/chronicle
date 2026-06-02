@@ -24,7 +24,7 @@ export default function WrappedPage() {
         setNarrative((prev) => prev + decoder.decode(value));
       }
     } catch {
-      setNarrative("Could not generate year-in-review. Make sure your Anthropic API key is configured.");
+      setNarrative("Could not generate year-in-review. Make sure your Gemini API key is configured.");
     } finally {
       setLoading(false);
     }
